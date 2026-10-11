@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* Fresh Light Green & White Palette */
+    --brand-primary: #16A34A;      /* Fresh Emerald Green */
+    --brand-dark: #15803D;         /* Medium Forest Accent */
+    --brand-emerald: #22C55E;      /* Bright Eco Green */
+    --brand-light: #DCFCE7;        /* Light Green 100 */
+    --brand-very-light: #F0FDF4;   /* Light Green 50 / Mint Wash */
+    --brand-mint: #E6F9EE;         /* Soft Mint */
+    
+    /* Solar Yellow Accents */
+    --solar-yellow: #FACC15;       /* Solar Yellow */
+    --solar-warm: #F59E0B;         /* Warm Solar Amber */
+    
+    /* Neutrals & Crisp Legible Text */
+    --color-white: #FFFFFF;
+    --text-dark: #0F291E;          /* Deep Forest Slate - High Contrast & Sharp */
+    --text-secondary: #475569;     /* Balanced Slate Body Text */
+    --border-light: #E2E8F0;
+    --border-green: #BBF7D0;       /* Crisp Light Green Border */
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+  font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+body {
+  color: var(--text-dark, #0F291E);
+  background-color: #FFFFFF;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Fresh Eco-Solar Gradients - Light Green & White */
+.gradient-light-hero {
+  background: linear-gradient(180deg, #F0FDF4 0%, #FFFFFF 60%, #F0FDF4 100%);
+}
+
+.gradient-light-green {
+  background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+}
+
+.gradient-eco-soft {
+  background: linear-gradient(180deg, #F0FDF4 0%, #FFFFFF 100%);
+}
+
+.gradient-eco-badge {
+  background: linear-gradient(135deg, #DCFCE7 0%, #BBF7D0 100%);
+}
+
+.gradient-solar-accent {
+  background: linear-gradient(135deg, #FACC15 0%, #F59E0B 100%);
+}
+
+/* Glassmorphism tuned for fresh light green & white aesthetic */
+.glass-card-eco {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(187, 247, 208, 0.9);
+}
+
+.glass-card-light-green {
+  background: rgba(240, 253, 244, 0.95);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid #DCFCE7;
+}
+
+/* Card hover animation */
+.card-hover-eco {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover-eco:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(22, 163, 74, 0.12), 0 8px 10px -6px rgba(22, 163, 74, 0.06);
+  border-color: #86EFAC;
+}
+
+/* Solar glow pulses */
+@keyframes solarPulse {
+  0%, 100% {
+    opacity: 0.15;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.28;
+    transform: scale(1.05);
+  }
+}
+
+.animate-solar-pulse {
+  animation: solarPulse 6s ease-in-out infinite;
+}
