@@ -3,6 +3,9 @@ import { getAdminSession } from "@/lib/auth";
 import { connectToDatabase } from "@/lib/db";
 import { Project } from "@/models/Project";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export interface ProjectData {
   _id: string;
   title: string;
@@ -33,27 +36,39 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const db = await connectToDatabase();
+    let db = await connectToDatabase();
+    if (!db && process.env.MONGODB_URI) {
+      db = await connectToDatabase();
+    }
+
     if (db) {
       const projects = await Project.find({}).sort({ createdAt: -1 }).lean();
-      if (projects && projects.length > 0) {
-        return NextResponse.json({
-          success: true,
-          projects: projects.map((p: any) => ({
-            _id: p._id.toString(),
-            title: p.title,
-            slug: p.slug,
-            description: p.description,
-            capacity: p.capacity,
-            location: p.location,
-            type: p.type,
-            images: p.images || [],
-            published: Boolean(p.published),
-            createdAt: p.createdAt?.toISOString?.() || new Date().toISOString(),
-            updatedAt: p.updatedAt?.toISOString?.() || new Date().toISOString(),
-          })),
-        });
-      }
+      return NextResponse.json({
+        success: true,
+        projects: (projects || []).map((p: any) => ({
+          _id: p._id.toString(),
+          title: p.title,
+          slug: p.slug,
+          description: p.description,
+          capacity: p.capacity,
+          location: p.location,
+          type: p.type,
+          images: p.images || [],
+          published: Boolean(p.published),
+          createdAt: p.createdAt?.toISOString?.() || new Date().toISOString(),
+          updatedAt: p.updatedAt?.toISOString?.() || new Date().toISOString(),
+        })),
+      });
+    }
+
+    if (process.env.MONGODB_URI && !db) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Database connection unavailable. Please verify MongoDB Atlas cluster is online and Network Access (IP whitelist 0.0.0.0/0) is configured.",
+        },
+        { status: 503 }
+      );
     }
 
     return NextResponse.json({

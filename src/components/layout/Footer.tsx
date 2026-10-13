@@ -1,5 +1,8 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { SITE_CONFIG, getWhatsAppUrl, getPhoneCallUrl, getSecondaryPhoneCallUrl } from "@/lib/site-config";
 import {
   Sun,
@@ -15,6 +18,13 @@ import {
 import { Logo } from "@/components/ui/Logo";
 
 export const Footer: React.FC = () => {
+  const pathname = usePathname();
+
+  // Do not render public footer on admin routes
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
+
   return (
     <footer className="bg-[#F0FDF4] text-[#0F291E] pt-16 pb-12 border-t-2 border-[#DCFCE7]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

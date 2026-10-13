@@ -65,6 +65,10 @@ export const Navbar: React.FC = () => {
     { label: "Contact", href: "/contact" },
   ];
 
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
+
   return (
     <>
       {/* Top Brand & Contact Strip */}

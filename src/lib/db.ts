@@ -1,11 +1,8 @@
 import mongoose from "mongoose";
 
-const MONGODB_URI = process.env.MONGODB_URI;
-
 interface MongooseCache {
   conn: typeof mongoose | null;
   promise: Promise<typeof mongoose> | null;
-  lastFailureTime: number;
 }
 
 declare global {
@@ -13,12 +10,9 @@ declare global {
   var mongooseCache: MongooseCache | undefined;
 }
 
-const FAILURE_COOLDOWN_MS = 30000; // 30 seconds cooldown between retries if offline
-
 const cached: MongooseCache = global.mongooseCache || {
   conn: null,
   promise: null,
-  lastFailureTime: 0,
 };
 
 if (!global.mongooseCache) {
@@ -26,46 +20,56 @@ if (!global.mongooseCache) {
 }
 
 /**
- * Connects to MongoDB using a cached singleton connection.
- * Avoids creating redundant connections on every API request.
- * Handles missing configuration and connection errors gracefully.
+ * Connects to MongoDB using a cached singleton connection suitable for serverless.
+ * - 10s timeout gives MongoDB Atlas sufficient time for TLS handshake and replica-set discovery.
+ * - Forces IPv4 (family: 4) to avoid IPv6 DNS delays common in cloud serverless environments.
+ * - Avoids locking out subsequent requests with artificial cooldowns.
  */
 export async function connectToDatabase(): Promise<typeof mongoose | null> {
-  if (!MONGODB_URI) {
+  const uri = process.env.MONGODB_URI;
+
+  if (!uri) {
+    console.warn("[MongoDB] Missing MONGODB_URI environment variable.");
     return null;
   }
 
-  // If already connected, return cached connection immediately
+  // 1. If active and fully connected, return immediately
   if (cached.conn && cached.conn.connection.readyState === 1) {
     return cached.conn;
   }
 
-  // If a recent connection attempt failed, fail fast during cooldown window
-  const now = Date.now();
-  if (cached.lastFailureTime && now - cached.lastFailureTime < FAILURE_COOLDOWN_MS) {
-    return null;
+  // 2. If in the process of connecting, await in-flight promise
+  if (cached.conn && cached.conn.connection.readyState === 2 && cached.promise) {
+    try {
+      return await cached.promise;
+    } catch {
+      cached.promise = null;
+      cached.conn = null;
+    }
   }
 
-  // If a connection attempt is in flight, await it
+  // 3. If disconnected or stale, create a new connection promise
   if (!cached.promise) {
     const opts: mongoose.ConnectOptions = {
       bufferCommands: false,
       maxPoolSize: 10,
-      serverSelectionTimeoutMS: 1500,
-      connectTimeoutMS: 1500,
+      minPoolSize: 1,
+      serverSelectionTimeoutMS: 10000, // 10s for replica set discovery
+      connectTimeoutMS: 10000,         // 10s for initial TLS/socket connection
+      socketTimeoutMS: 45000,          // 45s query socket timeout
+      family: 4,                       // Force IPv4 to eliminate IPv6 DNS lookup delays
     };
 
     cached.promise = mongoose
-      .connect(MONGODB_URI, opts)
+      .connect(uri, opts)
       .then((mongooseInstance) => {
-        cached.lastFailureTime = 0;
         console.log("[MongoDB] Connected successfully to database.");
         return mongooseInstance;
       })
       .catch((err) => {
         cached.promise = null;
-        cached.lastFailureTime = Date.now();
-        console.warn("[MongoDB] Offline or unreachable, operating in instant in-memory fallback mode:", err.message || err);
+        cached.conn = null;
+        console.error("[MongoDB] Connection failed:", err?.message || err);
         throw err;
       });
   }
@@ -73,9 +77,10 @@ export async function connectToDatabase(): Promise<typeof mongoose | null> {
   try {
     cached.conn = await cached.promise;
     return cached.conn;
-  } catch (_error) {
+  } catch (error) {
     cached.promise = null;
     cached.conn = null;
+    console.error("[MongoDB] Unable to establish connection:", (error as Error)?.message || error);
     return null;
   }
 }

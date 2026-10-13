@@ -60,14 +60,15 @@ export default function AdminProjectsPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/admin/projects");
-      if (!res.ok) throw new Error("Failed to load projects.");
+      const res = await fetch("/api/admin/projects", {
+        cache: "no-store",
+        headers: { "Cache-Control": "no-cache" },
+      });
       const data = await res.json();
-      if (data.success) {
-        setProjects(data.projects || []);
-      } else {
-        setError(data.message || "Failed to load projects.");
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || "Failed to load projects.");
       }
+      setProjects(data.projects || []);
     } catch (err: any) {
       setError(err.message || "Error communicating with server.");
     } finally {

@@ -5,6 +5,9 @@ import { Lead } from "@/models/Lead";
 import { Project } from "@/models/Project";
 import { Testimonial } from "@/models/Testimonial";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET(req: NextRequest) {
   const session = await getAdminSession(req);
   if (!session) {
@@ -12,7 +15,10 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const db = await connectToDatabase();
+    let db = await connectToDatabase();
+    if (!db && process.env.MONGODB_URI) {
+      db = await connectToDatabase();
+    }
 
     if (db) {
       const [
@@ -75,7 +81,17 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    // In-memory fallback
+    if (process.env.MONGODB_URI && !db) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Database connection unavailable. Please verify MongoDB Atlas cluster is online and Network Access (IP whitelist 0.0.0.0/0) is configured.",
+        },
+        { status: 503 }
+      );
+    }
+
+    // In-memory fallback for local dev only
     const memLeads = global.inMemoryLeads || [];
     const memProjects = global.inMemoryProjects || [];
     const memTestimonials = global.inMemoryTestimonials || [];

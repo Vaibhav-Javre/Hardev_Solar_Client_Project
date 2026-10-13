@@ -1,10 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { MessageCircle, Phone } from "lucide-react";
 import { COMPANY_CONFIG, getWhatsAppUrl, getPhoneCallUrl } from "@/data/companyConfig";
 
 export const FloatingContact: React.FC = () => {
+  const pathname = usePathname();
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -20,6 +22,9 @@ export const FloatingContact: React.FC = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Do not render floating contact buttons in the admin portal
+  if (pathname?.startsWith("/admin")) return null;
 
   if (!isVisible) return null;
 

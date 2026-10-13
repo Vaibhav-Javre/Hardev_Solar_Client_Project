@@ -53,14 +53,15 @@ export default function AdminTestimonialsPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/admin/testimonials");
-      if (!res.ok) throw new Error("Failed to load testimonials.");
+      const res = await fetch("/api/admin/testimonials", {
+        cache: "no-store",
+        headers: { "Cache-Control": "no-cache" },
+      });
       const data = await res.json();
-      if (data.success) {
-        setTestimonials(data.testimonials || []);
-      } else {
-        setError(data.message || "Failed to load testimonials.");
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || "Failed to load testimonials.");
       }
+      setTestimonials(data.testimonials || []);
     } catch (err: any) {
       setError(err.message || "Error communicating with server.");
     } finally {

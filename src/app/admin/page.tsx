@@ -61,18 +61,20 @@ export default function AdminDashboard() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/admin/stats")
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to load statistics.");
-        return res.json();
+    fetch("/api/admin/stats", {
+      cache: "no-store",
+      headers: { "Cache-Control": "no-cache" },
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          throw new Error(data.message || "Failed to load database statistics.");
+        }
+        return data;
       })
       .then((data) => {
-        if (data.success) {
-          setStats(data.stats);
-          setRecentLeads(data.recentLeads || []);
-        } else {
-          setError(data.message || "Failed to load dashboard metrics.");
-        }
+        setStats(data.stats);
+        setRecentLeads(data.recentLeads || []);
       })
       .catch((err) => {
         setError(err.message || "Error fetching database statistics.");

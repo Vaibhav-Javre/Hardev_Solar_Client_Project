@@ -4,6 +4,9 @@ import { getAdminSession } from "@/lib/auth";
 import { connectToDatabase } from "@/lib/db";
 import { Testimonial } from "@/models/Testimonial";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 interface RouteParams {
   params: Promise<{ id: string }>;
 }

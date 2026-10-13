@@ -3,6 +3,9 @@ import { getAdminSession } from "@/lib/auth";
 import { connectToDatabase } from "@/lib/db";
 import { Lead } from "@/models/Lead";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET(req: NextRequest) {
   // 1. Verify Admin Session
   const session = await getAdminSession(req);
@@ -23,7 +26,10 @@ export async function GET(req: NextRequest) {
     const service = searchParams.get("service");
     const sort = searchParams.get("sort") || "newest";
 
-    const db = await connectToDatabase();
+    let db = await connectToDatabase();
+    if (!db && process.env.MONGODB_URI) {
+      db = await connectToDatabase();
+    }
 
     // Query builder
     const query: any = {};
@@ -138,7 +144,17 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    // In-memory fallback if DB not yet connected
+    if (process.env.MONGODB_URI && !db) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Database connection unavailable. Please verify MongoDB Atlas cluster is online and Network Access (IP whitelist 0.0.0.0/0) is configured.",
+        },
+        { status: 503 }
+      );
+    }
+
+    // In-memory fallback only for local dev without DB configured
     let memoryLeads = (global.inMemoryLeads || []).map((l) => ({
       _id: l._id,
       fullName: l.fullName || l.name || "Customer",

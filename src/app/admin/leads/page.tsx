@@ -143,10 +143,15 @@ function LeadsContent() {
       if (statusFilter !== "ALL") params.set("status", statusFilter);
       if (propertyFilter !== "ALL") params.set("propertyType", propertyFilter);
 
-      const res = await fetch(`/api/admin/leads?${params.toString()}`);
-      if (!res.ok) throw new Error("Failed to load leads from database.");
-
+      const res = await fetch(`/api/admin/leads?${params.toString()}`, {
+        cache: "no-store",
+        headers: { "Cache-Control": "no-cache" },
+      });
       const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || "Failed to load leads from database.");
+      }
+
       if (data.success) {
         const fetchedLeads = data.leads || [];
         setLeads(fetchedLeads);

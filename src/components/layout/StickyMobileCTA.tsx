@@ -2,10 +2,16 @@
 
 import React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { MessageCircle, Sun } from "lucide-react";
 import { getWhatsAppUrl } from "@/data/companyConfig";
 
 export const StickyMobileCTA: React.FC = () => {
+  const pathname = usePathname();
+
+  // Do not render sticky mobile contact buttons in the admin portal
+  if (pathname?.startsWith("/admin")) return null;
+
   return (
     <aside
       aria-label="Mobile quick actions"

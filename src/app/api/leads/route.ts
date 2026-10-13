@@ -8,6 +8,9 @@ import {
 } from "@/lib/validations";
 import { sendLeadNotificationEmail } from "@/lib/email";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export interface LeadItem {
   _id: string;
   fullName: string;
@@ -246,6 +249,7 @@ export async function POST(req: NextRequest) {
     let leadId = `LEAD-${Date.now()}`;
 
     // 6. Connect to MongoDB and create Lead
+    let dbSaved = false;
     try {
       const db = await connectToDatabase();
       if (db) {
@@ -277,10 +281,53 @@ export async function POST(req: NextRequest) {
           status: "NEW",
         });
         leadId = doc._id.toString();
+        dbSaved = true;
         console.log("[Leads API] Saved lead to MongoDB:", leadId);
       }
     } catch (dbError) {
-      console.warn("[Leads API] MongoDB save error, fallback to memory store:", (dbError as Error).message);
+      console.warn("[Leads API] Initial MongoDB save attempt error:", (dbError as Error).message);
+    }
+
+    // If initial attempt failed and MONGODB_URI is configured, retry once
+    if (!dbSaved && process.env.MONGODB_URI) {
+      try {
+        console.warn("[Leads API] Retrying MongoDB connection and write...");
+        const db = await connectToDatabase();
+        if (db) {
+          const doc = await Lead.create({
+            fullName: sanitizedFullName,
+            name: sanitizedFullName,
+            phone: sanitizedPhone,
+            email: sanitizedEmail || undefined,
+            city: sanitizedCity,
+            location: sanitizedCity,
+            propertyType: validData.propertyType,
+            monthlyElectricityBill: sanitizedBill || "Not specified",
+            monthlyBill: sanitizedBill || "Not specified",
+            interestedService: validData.interestedService || "General Consultation",
+            estimatedCapacityKW: validData.estimatedCapacityKW || (validData.estimatedSystemSize ? `${validData.estimatedSystemSize} kW` : "To be determined"),
+            calculatorUsed: Boolean(validData.calculatorUsed),
+            estimatedSystemSize: validData.estimatedSystemSize,
+            estimatedMonthlyGeneration: validData.estimatedMonthlyGeneration,
+            estimatedAnnualGeneration: validData.estimatedAnnualGeneration,
+            estimatedMonthlySavings: validData.estimatedMonthlySavings,
+            estimatedAnnualSavings: validData.estimatedAnnualSavings,
+            estimatedPaybackYears: validData.estimatedPaybackYears,
+            roofAreaSqFt: validData.roofAreaSqFt,
+            message: sanitizedMessage || "Requested solar consultation",
+            source: validData.source || "website",
+            utmSource: validData.utmSource,
+            utmMedium: validData.utmMedium,
+            utmCampaign: validData.utmCampaign,
+            status: "NEW",
+          });
+          leadId = doc._id.toString();
+          dbSaved = true;
+          console.log("[Leads API] Saved lead to MongoDB on retry:", leadId);
+        }
+      } catch (retryErr) {
+        console.error("[Leads API] MongoDB retry save error:", (retryErr as Error).message);
+      }
     }
 
     // Maintain in-memory store for fallback/fast reads

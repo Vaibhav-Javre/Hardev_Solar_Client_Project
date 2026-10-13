@@ -23,6 +23,9 @@ if (!global.inMemoryTestimonials) {
   global.inMemoryTestimonials = [];
 }
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET(req: NextRequest) {
   const session = await getAdminSession(req);
   if (!session) {
@@ -30,24 +33,36 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const db = await connectToDatabase();
+    let db = await connectToDatabase();
+    if (!db && process.env.MONGODB_URI) {
+      db = await connectToDatabase();
+    }
+
     if (db) {
       const testimonials = await Testimonial.find({}).sort({ createdAt: -1 }).lean();
-      if (testimonials && testimonials.length > 0) {
-        return NextResponse.json({
-          success: true,
-          testimonials: testimonials.map((t: any) => ({
-            _id: t._id.toString(),
-            customerName: t.customerName,
-            location: t.location,
-            review: t.review,
-            rating: t.rating,
-            image: t.image,
-            published: Boolean(t.published),
-            createdAt: t.createdAt?.toISOString?.() || new Date().toISOString(),
-          })),
-        });
-      }
+      return NextResponse.json({
+        success: true,
+        testimonials: (testimonials || []).map((t: any) => ({
+          _id: t._id.toString(),
+          customerName: t.customerName,
+          location: t.location,
+          review: t.review,
+          rating: t.rating,
+          image: t.image,
+          published: Boolean(t.published),
+          createdAt: t.createdAt?.toISOString?.() || new Date().toISOString(),
+        })),
+      });
+    }
+
+    if (process.env.MONGODB_URI && !db) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Database connection unavailable. Please verify MongoDB Atlas cluster is online and Network Access (IP whitelist 0.0.0.0/0) is configured.",
+        },
+        { status: 503 }
+      );
     }
 
     return NextResponse.json({
