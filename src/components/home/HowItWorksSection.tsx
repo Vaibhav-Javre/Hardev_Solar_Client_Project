@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { INSTALLATION_STEPS, ProcessStep } from "@/data/processData";
+import { scrollToQuote } from "@/lib/quoteNavigation";
 
 const iconMap = {
   consultation: MessageSquareCheck,
@@ -106,13 +107,14 @@ export const InstallationProcess: React.FC = () => {
               Our qualified engineers are ready to assess your rooftop space and calculate your energy potential.
             </p>
           </div>
-          <Link
-            href="#consultation"
-            className="inline-flex items-center gap-2 px-6 py-3.5 bg-[#16A34A] hover:bg-[#15803D] text-white font-extrabold rounded-xl text-sm shrink-0 shadow-md shadow-[#16A34A]/20 transition-all"
+          <a
+            href="/#consultation"
+            onClick={scrollToQuote}
+            className="inline-flex items-center gap-2 px-6 py-3.5 bg-[#16A34A] hover:bg-[#15803D] text-white font-extrabold rounded-xl text-sm shrink-0 shadow-md shadow-[#16A34A]/20 transition-all cursor-pointer"
           >
             <span>Book Initial Consultation</span>
             <ArrowRight className="w-4 h-4 text-white" />
-          </Link>
+          </a>
         </div>
       </div>
     </section>

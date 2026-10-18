@@ -15,6 +15,7 @@ import {
   Home,
 } from "lucide-react";
 import { SOLAR_SOLUTIONS, SolarSolution } from "@/data/solutionsData";
+import { scrollToQuote } from "@/lib/quoteNavigation";
 
 const iconMap: Record<string, React.ElementType> = {
   installation: Wrench,
@@ -46,13 +47,14 @@ export const SolutionsSection: React.FC = () => {
           </div>
 
           <div className="shrink-0">
-            <Link
-              href="#consultation"
-              className="inline-flex items-center gap-2 px-6 py-3.5 bg-[#16A34A] hover:bg-[#15803D] text-white font-extrabold rounded-xl text-sm shadow-md shadow-[#16A34A]/20 transition-all"
+            <a
+              href="/#consultation"
+              onClick={scrollToQuote}
+              className="inline-flex items-center gap-2 px-6 py-3.5 bg-[#16A34A] hover:bg-[#15803D] text-white font-extrabold rounded-xl text-sm shadow-md shadow-[#16A34A]/20 transition-all cursor-pointer"
             >
               <span>Get a Free Consultation</span>
               <ArrowRight className="w-4 h-4 text-white" />
-            </Link>
+            </a>
           </div>
         </div>
 
@@ -113,12 +115,13 @@ export const SolutionsSection: React.FC = () => {
                     <span>View Details →</span>
                   </Link>
 
-                  <Link
-                    href="#consultation"
-                    className="text-xs font-bold px-3.5 py-2 bg-white hover:bg-[#DCFCE7] text-[#0F291E] border border-[#BBF7D0] rounded-xl shadow-xs transition-colors"
+                  <a
+                    href="/#consultation"
+                    onClick={scrollToQuote}
+                    className="text-xs font-bold px-3.5 py-2 bg-white hover:bg-[#DCFCE7] text-[#0F291E] border border-[#BBF7D0] rounded-xl shadow-xs transition-colors cursor-pointer"
                   >
                     Request Quote
-                  </Link>
+                  </a>
                 </div>
               </div>
             );

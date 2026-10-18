@@ -85,7 +85,7 @@ export default function HomePage() {
 
             {/* Right Column: Dedicated Consultation Form */}
             <div className="lg:col-span-7">
-              <ConsultationForm />
+              <ConsultationForm id="consultation-form-card" />
             </div>
           </div>
         </div>

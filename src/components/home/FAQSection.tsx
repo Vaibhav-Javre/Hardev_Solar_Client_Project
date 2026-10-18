@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { ChevronDown, HelpCircle, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { FAQ_DATA, FAQItem } from "@/data/faqData";
+import { scrollToQuote } from "@/lib/quoteNavigation";
 
 export const FAQSection: React.FC = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
@@ -74,13 +75,14 @@ export const FAQSection: React.FC = () => {
           <p className="text-xs sm:text-sm text-[#475569] mb-5">
             Our qualified solar engineers are available to review your latest electricity bill and discuss your setup.
           </p>
-          <Link
-            href="#consultation"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#16A34A] hover:bg-[#15803D] text-white font-extrabold text-xs sm:text-sm shadow-sm transition-all"
+          <a
+            href="/#consultation"
+            onClick={scrollToQuote}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#16A34A] hover:bg-[#15803D] text-white font-extrabold text-xs sm:text-sm shadow-sm transition-all cursor-pointer"
           >
             <span>Ask a Solar Engineer Directly</span>
             <ArrowRight className="w-4 h-4 text-white" />
-          </Link>
+          </a>
         </div>
       </div>
     </section>

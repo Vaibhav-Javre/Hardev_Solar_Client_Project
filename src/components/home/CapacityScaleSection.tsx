@@ -10,6 +10,7 @@ import {
   CheckCircle2,
   Building,
 } from "lucide-react";
+import { scrollToQuote } from "@/lib/quoteNavigation";
 
 interface ScaleTier {
   kw: string;
@@ -174,13 +175,14 @@ export const CapacityScaleSection: React.FC = () => {
                 </p>
 
                 <div className="pt-2">
-                  <Link
-                    href="#consultation"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#16A34A] hover:bg-[#15803D] text-white text-xs font-extrabold shadow-sm transition-all"
+                  <a
+                    href="/#consultation"
+                    onClick={scrollToQuote}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#16A34A] hover:bg-[#15803D] text-white text-xs font-extrabold shadow-sm transition-all cursor-pointer"
                   >
                     <span>Request Quote for {currentTier.kw}</span>
                     <ArrowRight className="w-4 h-4 text-white" />
-                  </Link>
+                  </a>
                 </div>
               </div>
 

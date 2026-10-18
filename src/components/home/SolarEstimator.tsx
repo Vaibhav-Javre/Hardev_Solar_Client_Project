@@ -22,6 +22,7 @@ import {
   calculateSavingsEstimate,
 } from "@/data/savingsEstimatorConfig";
 import { COMPANY_CONFIG } from "@/data/companyConfig";
+import { scrollToQuote } from "@/lib/quoteNavigation";
 
 export const SolarEstimator: React.FC = () => {
   const [propertyType, setPropertyType] = useState<PropertyType>("residential");
@@ -270,13 +271,14 @@ export const SolarEstimator: React.FC = () => {
 
               {/* Action Buttons */}
               <div className="space-y-2.5 pt-4 border-t border-[#DCFCE7]">
-                <Link
-                  href="#consultation"
-                  className="w-full py-3.5 px-4 bg-[#16A34A] hover:bg-[#15803D] active:bg-[#166534] text-white font-black rounded-xl text-center text-sm flex items-center justify-center gap-2 transition-all shadow-md shadow-[#16A34A]/20"
+                <a
+                  href="/#consultation"
+                  onClick={scrollToQuote}
+                  className="w-full py-3.5 px-4 bg-[#16A34A] hover:bg-[#15803D] active:bg-[#166534] text-white font-black rounded-xl text-center text-sm flex items-center justify-center gap-2 transition-all shadow-md shadow-[#16A34A]/20 cursor-pointer"
                 >
                   <span>Request Quote for {estimate.systemSizeKW} kW</span>
                   <ArrowRight className="w-4 h-4 text-white" />
-                </Link>
+                </a>
 
                 <WhatsAppButton
                   message={`Hello Hardev Solar Services, I used your solar estimator for a ${estimate.systemSizeKW} kW system (${propertyType}). I would like a free site assessment.`}

@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { MapPin, ArrowRight, Sun, Sparkles, Image as ImageIcon } from "lucide-react";
 import { PROJECTS_DATA, ProjectCardData, ProjectCategory } from "@/data/projectsData";
+import { scrollToQuote } from "@/lib/quoteNavigation";
 
 export const ProjectsGallery: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<ProjectCategory>("All");
@@ -129,12 +130,13 @@ export const ProjectsGallery: React.FC = () => {
 
               {/* Card Footer CTA */}
               <div className="p-6 pt-0">
-                <Link
-                  href="#consultation"
-                  className="w-full py-2.5 px-4 rounded-xl border-2 border-[#DCFCE7] hover:border-[#16A34A] hover:bg-[#F0FDF4] text-[#15803D] text-xs sm:text-sm font-extrabold text-center block transition-all"
+                <a
+                  href="/#consultation"
+                  onClick={scrollToQuote}
+                  className="w-full py-2.5 px-4 rounded-xl border-2 border-[#DCFCE7] hover:border-[#16A34A] hover:bg-[#F0FDF4] text-[#15803D] text-xs sm:text-sm font-extrabold text-center block transition-all cursor-pointer"
                 >
                   Request Similar Installation
-                </Link>
+                </a>
               </div>
             </div>
           ))}

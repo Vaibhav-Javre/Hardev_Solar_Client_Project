@@ -10,6 +10,7 @@ import {
   Sparkles,
   CheckCircle2,
 } from "lucide-react";
+import { scrollToQuote } from "@/lib/quoteNavigation";
 
 export const BenefitsSection: React.FC = () => {
   const benefits = [
@@ -123,8 +124,9 @@ export const BenefitsSection: React.FC = () => {
 
             <div className="pt-6">
               <a
-                href="#consultation"
-                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#16A34A] hover:bg-[#15803D] text-white font-extrabold text-sm shadow-md shadow-[#16A34A]/20 transition-all"
+                href="/#consultation"
+                onClick={scrollToQuote}
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#16A34A] hover:bg-[#15803D] text-white font-extrabold text-sm shadow-md shadow-[#16A34A]/20 transition-all cursor-pointer"
               >
                 <span>Calculate Your Solar Benefits</span>
               </a>

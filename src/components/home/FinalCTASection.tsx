@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight, Phone, ShieldCheck, Sun, Zap, Leaf } from "lucide-react";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { COMPANY_CONFIG, getPhoneCallUrl } from "@/data/companyConfig";
+import { scrollToQuote } from "@/lib/quoteNavigation";
 
 export const FinalCTASection: React.FC = () => {
   return (
@@ -32,13 +33,14 @@ export const FinalCTASection: React.FC = () => {
 
         {/* Buttons: Get Free Consultation, Contact Us */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto mb-10">
-          <Link
-            href="#consultation"
+          <a
+            href="/#consultation"
+            onClick={scrollToQuote}
             className="w-full sm:w-auto px-8 py-4 bg-[#16A34A] hover:bg-[#15803D] active:bg-[#166534] text-white font-black rounded-2xl text-base shadow-xl shadow-[#16A34A]/25 flex items-center justify-center gap-2.5 transition-all cursor-pointer group"
           >
             <span>Get Free Consultation</span>
             <ArrowRight className="w-5 h-5 text-white group-hover:translate-x-1 transition-transform" />
-          </Link>
+          </a>
 
           <Link
             href="/contact"

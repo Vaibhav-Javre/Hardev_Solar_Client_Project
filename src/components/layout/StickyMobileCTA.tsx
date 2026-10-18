@@ -1,13 +1,31 @@
 "use client";
 
-import React from "react";
-import Link from "next/link";
+import React, { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { MessageCircle, Sun } from "lucide-react";
 import { getWhatsAppUrl } from "@/data/companyConfig";
+import { scrollToQuote } from "@/lib/quoteNavigation";
 
 export const StickyMobileCTA: React.FC = () => {
   const pathname = usePathname();
+
+  // Handle incoming hash on page load or client-side navigation
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const checkAndScroll = () => {
+      const hash = window.location.hash;
+      if (hash === "#consultation" || hash === "#hero-consultation") {
+        setTimeout(() => {
+          scrollToQuote();
+        }, 200);
+      }
+    };
+
+    checkAndScroll();
+    window.addEventListener("hashchange", checkAndScroll);
+    return () => window.removeEventListener("hashchange", checkAndScroll);
+  }, [pathname]);
 
   // Do not render sticky mobile contact buttons in the admin portal
   if (pathname?.startsWith("/admin")) return null;
@@ -29,14 +47,15 @@ export const StickyMobileCTA: React.FC = () => {
           <span>WhatsApp</span>
         </a>
 
-        {/* Get Free Quote Button */}
-        <Link
-          href="#consultation"
-          className="flex items-center justify-center gap-1.5 py-3 px-3 bg-[#0F291E] hover:bg-[#15803D] active:bg-[#166534] text-white font-extrabold rounded-xl text-xs sm:text-sm text-center shadow-md border border-[#BBF7D0]/30 transition-colors"
+        {/* Get Free Quote Button - Guaranteed to scroll & focus every single click */}
+        <a
+          href="/#consultation"
+          onClick={scrollToQuote}
+          className="flex items-center justify-center gap-1.5 py-3 px-3 bg-[#0F291E] hover:bg-[#15803D] active:bg-[#166534] text-white font-extrabold rounded-xl text-xs sm:text-sm text-center shadow-md border border-[#BBF7D0]/30 transition-colors cursor-pointer"
         >
           <Sun className="w-4 h-4 text-[#FACC15] fill-[#FACC15]" />
           <span>Get Free Quote</span>
-        </Link>
+        </a>
       </div>
     </aside>
   );

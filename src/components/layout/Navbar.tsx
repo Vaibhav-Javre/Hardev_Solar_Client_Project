@@ -17,6 +17,7 @@ import {
 import { Logo } from "@/components/ui/Logo";
 import { LanguageSelector } from "@/components/ui/LanguageSelector";
 import { useLanguage } from "@/context/LanguageContext";
+import { scrollToQuote } from "@/lib/quoteNavigation";
 
 export const Navbar: React.FC = () => {
   const { t } = useLanguage();
@@ -193,13 +194,14 @@ export const Navbar: React.FC = () => {
           {/* Right Action CTA Button & Language Selector */}
           <div className="hidden lg:flex items-center gap-3">
             <LanguageSelector variant="navbar" />
-            <Link
+            <a
               href="/#consultation"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#16A34A] hover:bg-[#15803D] active:bg-[#166534] text-white font-extrabold text-sm shadow-md shadow-[#16A34A]/20 transition-all border border-[#16A34A]"
+              onClick={scrollToQuote}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#16A34A] hover:bg-[#15803D] active:bg-[#166534] text-white font-extrabold text-sm shadow-md shadow-[#16A34A]/20 transition-all border border-[#16A34A] cursor-pointer"
             >
               <span>{t("nav.getQuote", "Get Consultation")}</span>
               <ArrowRight className="w-4 h-4 text-white" />
-            </Link>
+            </a>
           </div>
 
           {/* Mobile Menu Action Buttons */}
@@ -281,13 +283,16 @@ export const Navbar: React.FC = () => {
             </nav>
 
             <div className="pt-4 border-t border-[#DCFCE7] space-y-2">
-              <Link
+              <a
                 href="/#consultation"
-                onClick={() => setMobileMenuOpen(false)}
-                className="w-full py-3 px-4 rounded-xl bg-[#16A34A] text-white font-extrabold text-sm text-center block shadow-md"
+                onClick={(e) => {
+                  setMobileMenuOpen(false);
+                  scrollToQuote(e);
+                }}
+                className="w-full py-3 px-4 rounded-xl bg-[#16A34A] text-white font-extrabold text-sm text-center block shadow-md cursor-pointer"
               >
                 Get a Free Consultation
-              </Link>
+              </a>
 
               <div className="pt-2 text-xs text-[#475569] space-y-1">
                 <div>Contact: {SITE_CONFIG.contactName}</div>

@@ -9,6 +9,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { ConsultationForm } from "@/components/forms/ConsultationForm";
+import { scrollToQuote } from "@/lib/quoteNavigation";
 
 export const HeroSection: React.FC = () => {
   return (
@@ -41,13 +42,14 @@ export const HeroSection: React.FC = () => {
 
             {/* Two Primary Buttons */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1">
-              <Link
+              <a
                 href="#hero-consultation"
+                onClick={scrollToQuote}
                 className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#16A34A] hover:bg-[#15803D] active:bg-[#166534] text-white font-black text-sm sm:text-base shadow-lg shadow-[#16A34A]/30 transition-all border border-[#22C55E] group cursor-pointer"
               >
                 <span>Get a Free Consultation</span>
                 <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-1 transition-transform" />
-              </Link>
+              </a>
 
               <Link
                 href="#solutions"
