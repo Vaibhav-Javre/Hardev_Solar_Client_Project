@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SITE_CONFIG, getWhatsAppUrl, getPhoneCallUrl, getSecondaryPhoneCallUrl } from "@/lib/site-config";
 import {
-  Sun,
   Phone,
   Mail,
   MapPin,
@@ -13,6 +12,7 @@ import {
   Clock,
   ShieldCheck,
   Zap,
+  Lock,
 } from "lucide-react";
 
 import { Logo } from "@/components/ui/Logo";
@@ -238,6 +238,15 @@ export const Footer: React.FC = () => {
             <span className="text-[#86EFAC]">•</span>
             <Link href="/services" className="hover:text-[#16A34A] transition-colors">
               Services
+            </Link>
+            <span className="text-[#86EFAC]">•</span>
+            <Link
+              href="/admin"
+              className="text-[#475569] hover:text-[#16A34A] transition-colors inline-flex items-center gap-1 font-medium"
+              title="Admin & Operations Portal"
+            >
+              <Lock className="w-3 h-3 text-[#16A34A]" />
+              <span>Admin Portal</span>
             </Link>
             <span className="text-[#86EFAC]">•</span>
             <LanguageSelector variant="topbar" />

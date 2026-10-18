@@ -10,7 +10,8 @@ const AUTH_SECRET =
   "swayam-infraverse-production-auth-secret-key-2026";
 
 const COOKIE_NAME = "admin_session";
-const SESSION_DURATION_SECONDS = 60 * 60 * 24; // 24 hours
+const SESSION_DURATION_SECONDS = 60 * 60 * 24 * 7; // 7 days standard
+const REMEMBER_ME_DURATION_SECONDS = 60 * 60 * 24 * 30; // 30 days extended
 
 export interface AdminSession {
   email: string;
@@ -48,8 +49,11 @@ export function verifyPassword(password: string, combinedHash: string): boolean 
 /**
  * Creates an HMAC-SHA256 signed session token
  */
-export function createSessionToken(session: Omit<AdminSession, "expiresAt">): string {
-  const expiresAt = Math.floor(Date.now() / 1000) + SESSION_DURATION_SECONDS;
+export function createSessionToken(
+  session: Omit<AdminSession, "expiresAt">,
+  durationSeconds: number = SESSION_DURATION_SECONDS
+): string {
+  const expiresAt = Math.floor(Date.now() / 1000) + durationSeconds;
   const payload: AdminSession = { ...session, expiresAt };
   const payloadStr = Buffer.from(JSON.stringify(payload)).toString("base64url");
   const signature = crypto
@@ -260,4 +264,4 @@ export async function getAdminSession(
   return verifySessionToken(token);
 }
 
-export { COOKIE_NAME, SESSION_DURATION_SECONDS };
+export { COOKIE_NAME, SESSION_DURATION_SECONDS, REMEMBER_ME_DURATION_SECONDS };

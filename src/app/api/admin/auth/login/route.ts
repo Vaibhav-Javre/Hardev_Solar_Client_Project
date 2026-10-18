@@ -4,12 +4,13 @@ import {
   createSessionToken,
   COOKIE_NAME,
   SESSION_DURATION_SECONDS,
+  REMEMBER_ME_DURATION_SECONDS,
 } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { email, password } = body;
+    const { email, password, rememberMe = true } = body;
 
     if (!email || !password) {
       return NextResponse.json(
@@ -27,13 +28,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const token = createSessionToken(authResult.session);
+    const duration = rememberMe ? REMEMBER_ME_DURATION_SECONDS : SESSION_DURATION_SECONDS;
+    const token = createSessionToken(authResult.session, duration);
 
     const response = NextResponse.json({
       success: true,
       message: "Authentication successful.",
       user: authResult.session,
     });
+
+    const expiresDate = new Date(Date.now() + duration * 1000);
 
     response.cookies.set({
       name: COOKIE_NAME,
@@ -42,7 +46,8 @@ export async function POST(req: NextRequest) {
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       path: "/",
-      maxAge: SESSION_DURATION_SECONDS,
+      maxAge: duration,
+      expires: expiresDate,
     });
 
     return response;

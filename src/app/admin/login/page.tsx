@@ -16,9 +16,35 @@ function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
+
+  // Check if admin is already signed in
+  React.useEffect(() => {
+    let isMounted = true;
+    fetch("/api/admin/auth/me")
+      .then((res) => {
+        if (!res.ok) throw new Error("Unauthenticated");
+        return res.json();
+      })
+      .then((data) => {
+        if (isMounted && data?.success && data?.user) {
+          router.replace(redirectTo);
+        } else {
+          if (isMounted) setCheckingAuth(false);
+        }
+      })
+      .catch(() => {
+        if (isMounted) setCheckingAuth(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [router, redirectTo]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,7 +55,7 @@ function LoginForm() {
       const res = await fetch("/api/admin/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, rememberMe }),
       });
 
       const data = await res.json();
@@ -48,6 +74,19 @@ function LoginForm() {
       setIsSubmitting(false);
     }
   };
+
+  if (checkingAuth) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-[#F0FDF4] via-white to-[#F0FDF4] flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8 text-[#0F291E] relative overflow-hidden">
+        <div className="bg-white py-10 px-8 shadow-xl shadow-[#16A34A]/5 rounded-3xl border-2 border-[#DCFCE7] flex flex-col items-center max-w-sm text-center">
+          <Logo priority className="h-14 w-auto mb-4" />
+          <Loader2 className="w-8 h-8 text-[#16A34A] animate-spin mb-3" />
+          <h2 className="text-sm font-black text-[#0F291E]">Checking Active Session...</h2>
+          <p className="text-xs text-[#475569] mt-1">If already signed in, you will be automatically redirected.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#F0FDF4] via-white to-[#F0FDF4] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 text-[#0F291E] relative overflow-hidden">
@@ -149,8 +188,19 @@ function LoginForm() {
               </div>
             </div>
 
-            {/* Change Password Link */}
-            <div className="flex items-center justify-end -mt-1">
+            {/* Remember Me & Change Password Link */}
+            <div className="flex items-center justify-between text-xs pt-1">
+              <label className="flex items-center gap-2 cursor-pointer select-none text-[#475569] hover:text-[#0F291E]">
+                <input
+                  type="checkbox"
+                  id="remember-me"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="w-4 h-4 rounded border-[#DCFCE7] text-[#16A34A] focus:ring-[#16A34A] cursor-pointer accent-[#16A34A]"
+                />
+                <span className="font-semibold text-xs text-[#0F291E]">Stay signed in (30 days)</span>
+              </label>
+
               <button
                 type="button"
                 onClick={() => setChangePasswordOpen(true)}
