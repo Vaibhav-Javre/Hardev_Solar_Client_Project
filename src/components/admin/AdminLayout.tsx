@@ -15,9 +15,11 @@ import {
   ExternalLink,
   ShieldCheck,
   ChevronRight,
+  KeyRound,
 } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/site-config";
 import { Logo } from "@/components/ui/Logo";
+import { ChangePasswordModal } from "@/components/admin/ChangePasswordModal";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -62,6 +64,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   const [mobileOpen, setMobileOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<{ email: string; name: string } | null>(null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
 
   useEffect(() => {
     // Fetch authenticated user info
@@ -105,15 +108,27 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
           </span>
         </Link>
 
-        <button
-          type="button"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="p-2 rounded-xl text-[#0F291E] hover:bg-[#F0FDF4] border border-[#DCFCE7] transition-colors cursor-pointer"
-          aria-label={mobileOpen ? "Close admin navigation menu" : "Open admin navigation menu"}
-          aria-expanded={mobileOpen}
-        >
-          {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setChangePasswordOpen(true)}
+            className="p-2 rounded-xl text-[#16A34A] bg-[#F0FDF4] hover:bg-[#DCFCE7] border border-[#DCFCE7] transition-colors cursor-pointer"
+            title="Change Password"
+            aria-label="Change Password"
+          >
+            <KeyRound className="w-4 h-4" />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="p-2 rounded-xl text-[#0F291E] hover:bg-[#F0FDF4] border border-[#DCFCE7] transition-colors cursor-pointer"
+            aria-label={mobileOpen ? "Close admin navigation menu" : "Open admin navigation menu"}
+            aria-expanded={mobileOpen}
+          >
+            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Drawer Overlay */}
@@ -196,6 +211,21 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
             </div>
           </div>
 
+          {/* Change Password button */}
+          <button
+            type="button"
+            onClick={() => {
+              setMobileOpen(false);
+              setChangePasswordOpen(true);
+            }}
+            className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold text-[#0F291E] bg-[#F0FDF4] hover:bg-[#DCFCE7] transition-colors border border-[#BBF7D0] cursor-pointer"
+          >
+            <div className="flex items-center gap-2.5">
+              <KeyRound className="w-4 h-4 text-[#16A34A]" />
+              <span>Change Password</span>
+            </div>
+          </button>
+
           {/* External Public Website Link */}
           <Link
             href="/"
@@ -235,6 +265,15 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
           </div>
 
           <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setChangePasswordOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#F0FDF4] hover:bg-[#DCFCE7] text-[#15803D] text-xs font-bold rounded-xl border border-[#BBF7D0] transition-colors cursor-pointer shadow-2xs"
+            >
+              <KeyRound className="w-3.5 h-3.5" />
+              <span>Change Password</span>
+            </button>
+
             <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#DCFCE7] text-[#15803D] text-xs font-bold rounded-full border border-[#BBF7D0]">
               <span className="w-2 h-2 rounded-full bg-[#16A34A] animate-pulse" />
               <span>Admin Active</span>
@@ -245,6 +284,14 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
         {/* Page body */}
         <div className="flex-1 p-4 sm:p-6 lg:p-8">{children}</div>
       </main>
+
+      {/* Change Password Dialog Modal */}
+      <ChangePasswordModal
+        isOpen={changePasswordOpen}
+        onClose={() => setChangePasswordOpen(false)}
+        userEmail={currentUser?.email}
+      />
     </div>
   );
 };
+

@@ -122,6 +122,9 @@ export async function authenticateAdmin(
               role: adminDoc.role || "superadmin",
             },
           };
+        } else {
+          // Explicit admin record exists in DB; password was incorrect
+          return { success: false };
         }
       }
     }
@@ -139,15 +142,14 @@ export async function authenticateAdmin(
     cleanEmail === "admin@swayaminfraverse.com";
 
   const DEFAULT_ADMIN_HASH =
-    "8cd4e8422f59ae49ece2f38193006251:6db2b7d9af98ead01ec31f74c81a46a18242a9a62ddb26f5a26462b05dbd2f9c648c13d7e73ff3695ad8971cfea2ce2286bacbe16826f5b537d77ef4fcca1a79";
+    "43006d06bdf4ed4e273da07ff0af39b6:7f4a33c9b3ceb6754b42940af246377add3d5137c9e6288a1d923dde0b5a9a1ef4a63fe401739ff8f9249552384446f379828d58197a0cecece23fab051b283f";
   const activeHash = envHash || DEFAULT_ADMIN_HASH;
 
   if (isMatchingAdminEmail) {
     const isValid =
       verifyPassword(pass, activeHash) ||
-      verifyPassword(pass, DEFAULT_ADMIN_HASH) ||
-      pass === "HardevSolar@2026!" ||
-      pass === "SwayamSolar@2026!";
+      pass === "Chandrakant@123";
+
     if (isValid) {
       return {
         success: true,
@@ -161,6 +163,71 @@ export async function authenticateAdmin(
   }
 
   return { success: false };
+}
+
+/**
+ * Updates an admin's password after verifying their current password
+ */
+export async function changeAdminPassword(
+  email: string,
+  currentPass: string,
+  newPass: string
+): Promise<{ success: boolean; message: string }> {
+  const cleanEmail = email.trim().toLowerCase();
+
+  if (!newPass || newPass.length < 8) {
+    return {
+      success: false,
+      message: "New password must be at least 8 characters long.",
+    };
+  }
+
+  // 1. Verify current credentials
+  const authResult = await authenticateAdmin(cleanEmail, currentPass);
+  if (!authResult.success || !authResult.session) {
+    return {
+      success: false,
+      message: "Current password is incorrect.",
+    };
+  }
+
+  // 2. Hash new password
+  const { combined } = hashPassword(newPass);
+
+  // 3. Save / upsert to MongoDB Admin collection
+  try {
+    const db = await connectToDatabase();
+    if (!db) {
+      return {
+        success: false,
+        message: "Database connection unavailable. Please verify MongoDB status.",
+      };
+    }
+
+    await Admin.findOneAndUpdate(
+      { email: cleanEmail },
+      {
+        $set: {
+          email: cleanEmail,
+          passwordHash: combined,
+          name: authResult.session.name || "Hardev Solar Services Admin",
+          role: authResult.session.role || "superadmin",
+        },
+      },
+      { upsert: true, new: true }
+    );
+
+    return {
+      success: true,
+      message: "Password changed successfully.",
+    };
+  } catch (error) {
+    console.error("[ChangeAdminPassword Error]:", error);
+    return {
+      success: false,
+      message: "Database error while updating password.",
+    };
+  }
 }
 
 /**

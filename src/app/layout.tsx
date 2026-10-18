@@ -60,6 +60,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { LanguageProvider } from "@/context/LanguageContext";
+
 export default function RootLayout({
   children,
 }: {
@@ -71,12 +73,15 @@ export default function RootLayout({
         <JsonLd />
       </head>
       <body className={`min-h-full flex flex-col bg-white text-[#123524] ${inter.variable} font-sans antialiased pb-16 lg:pb-0`}>
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
-        <StickyMobileCTA />
-        <FloatingContact />
+        <LanguageProvider>
+          <Navbar />
+          <main className="flex-1">{children}</main>
+          <Footer />
+          <StickyMobileCTA />
+          <FloatingContact />
+        </LanguageProvider>
       </body>
     </html>
   );
 }
+

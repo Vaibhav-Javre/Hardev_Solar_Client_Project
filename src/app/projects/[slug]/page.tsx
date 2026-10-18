@@ -120,45 +120,46 @@ export default async function IndividualProjectPage({
             {/* Left Column: Hero Image / Visual, Overview & Gallery */}
             <div className="lg:col-span-7 space-y-10">
               {/* Project Hero Image / Visual Presentation */}
-              <div className="relative h-72 sm:h-96 rounded-3xl bg-gradient-to-br from-[#16A34A] via-[#15803D] to-[#065F46] p-6 flex flex-col justify-between overflow-hidden text-white shadow-md border-2 border-[#86EFAC]/40">
-                <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#FACC15_1px,transparent_1px)] [background-size:18px_18px]" />
+              <div className="relative h-72 sm:h-96 rounded-3xl overflow-hidden text-white shadow-xl border-2 border-[#86EFAC]/40 bg-slate-900 group">
+                {project.coverImage ? (
+                  <img
+                    src={project.coverImage}
+                    alt={project.title}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                  />
+                ) : (
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#16A34A] to-[#065F46]" />
+                )}
 
-                <div className="relative z-10 flex items-center justify-between">
-                  <span className="text-xs font-black px-3.5 py-1.5 rounded-full bg-white/20 backdrop-blur-md text-[#FEF08A] border border-white/30 shadow-xs">
-                    {project.type} Solar
-                  </span>
-                  <span className="text-xs font-black px-3 py-1 rounded-full bg-black/25 text-[#DCFCE7] border border-white/20">
-                    {project.capacity} Installed
-                  </span>
-                </div>
+                {/* Dark Gradient Overlay for Crisp Text Readability */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-black/30 pointer-events-none" />
 
-                <div className="relative z-10 my-auto text-center flex flex-col items-center justify-center">
-                  <div className="w-16 h-16 rounded-2xl bg-white/15 backdrop-blur-sm border border-white/30 flex items-center justify-center text-[#FACC15] mb-3">
-                    {project.coverImage ? (
-                      <ImageIcon className="w-8 h-8 text-white" />
-                    ) : (
-                      <Sun className="w-8 h-8 stroke-[2.3]" />
-                    )}
-                  </div>
-                  <span className="text-xs sm:text-sm font-bold text-white/95 tracking-wide">
-                    {project.coverImage ? "Installed Site Photograph" : "Verified Project Specification & Engineering"}
-                  </span>
-                </div>
-
-                <div className="relative z-10 flex items-center justify-between border-t border-white/20 pt-3">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-3xl font-black text-[#FACC15] font-mono">
-                      {project.capacity}
+                <div className="relative z-10 p-6 h-full flex flex-col justify-between">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-black px-3.5 py-1.5 rounded-full bg-white/20 backdrop-blur-md text-[#FEF08A] border border-white/30 shadow-xs">
+                      {project.type} Solar
                     </span>
-                    <span className="text-xs uppercase font-bold tracking-wider text-[#DCFCE7]">
-                      PV System
+                    <span className="text-xs font-black px-3 py-1 rounded-full bg-black/40 backdrop-blur-md text-[#DCFCE7] border border-white/20">
+                      {project.capacity} Installed
                     </span>
                   </div>
-                  <span className="text-xs font-medium text-white/90">
-                    {project.location}
-                  </span>
+
+                  <div className="flex items-end justify-between border-t border-white/20 pt-3">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-3xl font-black text-[#FACC15] font-mono drop-shadow-md">
+                        {project.capacity}
+                      </span>
+                      <span className="text-xs uppercase font-bold tracking-wider text-[#DCFCE7] drop-shadow-xs">
+                        PV System
+                      </span>
+                    </div>
+                    <span className="text-xs font-semibold text-white/95 bg-black/40 px-2.5 py-1 rounded-md backdrop-blur-xs">
+                      {project.location}
+                    </span>
+                  </div>
                 </div>
               </div>
+
 
               {/* Project Overview */}
               <div>

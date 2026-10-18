@@ -11,13 +11,15 @@ import {
   ArrowRight,
   MessageCircle,
   ShieldCheck,
-  MapPin,
   Menu,
   X,
 } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
+import { LanguageSelector } from "@/components/ui/LanguageSelector";
+import { useLanguage } from "@/context/LanguageContext";
 
 export const Navbar: React.FC = () => {
+  const { t } = useLanguage();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [solutionsDropdownOpen, setSolutionsDropdownOpen] = useState(false);
@@ -43,10 +45,10 @@ export const Navbar: React.FC = () => {
   }
 
   const navItems = [
-    { label: "Home", href: "/" },
-    { label: "About", href: "/about" },
+    { label: t("nav.home", "Home"), href: "/" },
+    { label: t("nav.about", "About"), href: "/about" },
     {
-      label: "Solutions",
+      label: t("nav.solutions", "Solutions"),
       href: "/services",
       hasDropdown: true,
       dropdownItems: [
@@ -59,10 +61,10 @@ export const Navbar: React.FC = () => {
         { label: "Commercial Solar", href: "/services/commercial-solar", desc: "Energy cost-cutting for businesses & offices" },
       ],
     },
-    { label: "Projects", href: "/projects" },
-    { label: "Solar Calculator", href: "/solar-calculator" },
-    { label: "FAQ", href: "/faq" },
-    { label: "Contact", href: "/contact" },
+    { label: t("nav.projects", "Projects"), href: "/projects" },
+    { label: t("nav.calculator", "Solar Calculator"), href: "/solar-calculator" },
+    { label: t("nav.faq", "FAQ"), href: "/faq" },
+    { label: t("nav.contact", "Contact"), href: "/contact" },
   ];
 
   if (pathname?.startsWith("/admin")) {
@@ -77,16 +79,16 @@ export const Navbar: React.FC = () => {
           <div className="flex items-center gap-3 text-[11px] sm:text-xs font-medium">
             <span className="inline-flex items-center gap-1.5 text-[#16A34A] font-bold">
               <Sun className="w-3.5 h-3.5 fill-[#FACC15] text-[#F59E0B]" />
-              Solar Solutions Across Maharashtra
+              {t("nav.scope", "Solar Solutions Across Maharashtra")}
             </span>
             <span className="hidden md:inline text-[#86EFAC]">|</span>
             <span className="hidden md:inline-flex items-center gap-1 text-[#475569]">
               <ShieldCheck className="w-3.5 h-3.5 text-[#16A34A]" />
-              In partnership with Swayam Infraverse
+              {t("nav.partnership", "In partnership with Swayam Infraverse")}
             </span>
           </div>
 
-          <div className="flex items-center gap-4 text-[11px] sm:text-xs">
+          <div className="flex items-center gap-3 text-[11px] sm:text-xs">
             <a
               href={getPhoneCallUrl(SITE_CONFIG.primaryPhone)}
               className="inline-flex items-center gap-1.5 text-[#475569] hover:text-[#16A34A] transition-colors"
@@ -103,8 +105,10 @@ export const Navbar: React.FC = () => {
               className="inline-flex items-center gap-1 text-[#16A34A] hover:text-[#15803D] font-bold transition-colors"
             >
               <MessageCircle className="w-3.5 h-3.5" />
-              <span>WhatsApp Us</span>
+              <span>{t("nav.whatsapp", "WhatsApp Us")}</span>
             </a>
+            <span className="text-[#86EFAC]">|</span>
+            <LanguageSelector variant="topbar" />
           </div>
         </div>
       </div>
@@ -186,19 +190,22 @@ export const Navbar: React.FC = () => {
             })}
           </nav>
 
-          {/* Right Action CTA Button */}
+          {/* Right Action CTA Button & Language Selector */}
           <div className="hidden lg:flex items-center gap-3">
+            <LanguageSelector variant="navbar" />
             <Link
               href="/#consultation"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#16A34A] hover:bg-[#15803D] active:bg-[#166534] text-white font-extrabold text-sm shadow-md shadow-[#16A34A]/20 transition-all border border-[#16A34A]"
             >
-              <span>Get Consultation</span>
+              <span>{t("nav.getQuote", "Get Consultation")}</span>
               <ArrowRight className="w-4 h-4 text-white" />
             </Link>
           </div>
 
-          {/* Mobile Menu Hamburger Button */}
+          {/* Mobile Menu Action Buttons */}
           <div className="lg:hidden flex items-center gap-2">
+            <LanguageSelector variant="topbar" />
+
             <a
               href={getWhatsAppUrl()}
               target="_blank"
@@ -238,6 +245,11 @@ export const Navbar: React.FC = () => {
               >
                 <X className="w-5 h-5 text-gray-500" />
               </button>
+            </div>
+
+            {/* Language Selector in Mobile Drawer */}
+            <div className="pb-3 border-b border-[#DCFCE7]">
+              <LanguageSelector variant="mobile" />
             </div>
 
             <nav className="space-y-1">

@@ -6,6 +6,7 @@ export interface IAdmin extends Document {
   name: string;
   role: "superadmin" | "manager";
   createdAt: Date;
+  updatedAt: Date;
 }
 
 const AdminSchema = new Schema<IAdmin>(
@@ -34,7 +35,7 @@ const AdminSchema = new Schema<IAdmin>(
     },
   },
   {
-    timestamps: { createdAt: true, updatedAt: false },
+    timestamps: true,
   }
 );
 

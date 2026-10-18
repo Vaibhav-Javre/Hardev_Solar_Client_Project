@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { leadFormSchema, LeadFormInput } from "@/lib/validations/lead";
-import { CheckCircle2, Loader2, MapPin, User, ShieldCheck, ArrowRight, Phone } from "lucide-react";
+import { CheckCircle2, Loader2, MapPin, User, ShieldCheck, ArrowRight, Phone, MessageSquare } from "lucide-react";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { SITE_CONFIG, getPhoneCallUrl } from "@/lib/site-config";
 import { useLeadSubmit } from "@/lib/useLeadSubmit";
@@ -59,6 +59,7 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({
       monthlyBill: "₹2,500 – ₹4,000",
       propertyType: "Residential",
       website: "",
+      message: "",
     },
   });
 
@@ -70,6 +71,7 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({
       city: data.location,
       monthlyElectricityBill: data.monthlyBill,
       interestedService: "Residential Solar",
+      message: data.message,
       source: "homepage",
     });
 
@@ -271,6 +273,31 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({
               );
             })}
           </div>
+        </div>
+
+        {/* Requirements / Questions */}
+        <div>
+          <label
+            htmlFor="consult-message"
+            className="block text-xs font-extrabold uppercase tracking-wider text-[#0F291E] mb-1.5"
+          >
+            Describe Your Requirements / Questions (Optional)
+          </label>
+          <div className="relative">
+            <div className="absolute top-3 left-0 pl-3.5 flex items-start pointer-events-none text-[#475569]">
+              <MessageSquare className="w-4 h-4" />
+            </div>
+            <textarea
+              id="consult-message"
+              rows={3}
+              placeholder="e.g. Roof type (RCC/sheet), space availability, 3kW-10kW requirement, battery backup or subsidy questions..."
+              {...register("message")}
+              className="w-full pl-10 pr-3.5 py-2.5 bg-[#F0FDF4]/60 border border-[#DCFCE7] rounded-xl text-xs sm:text-sm text-[#0F291E] placeholder:text-[#475569]/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16A34A] transition-all resize-y"
+            />
+          </div>
+          {errors.message && (
+            <p className="mt-1 text-[11px] text-red-600">{errors.message.message}</p>
+          )}
         </div>
 
         {/* Primary CTA */}

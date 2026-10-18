@@ -3,9 +3,10 @@
 import React, { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Lock, Mail, Sun, ArrowRight, Eye, EyeOff, Loader2, ShieldCheck, AlertCircle } from "lucide-react";
+import { Lock, Mail, Sun, ArrowRight, Eye, EyeOff, Loader2, ShieldCheck, AlertCircle, KeyRound } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/site-config";
 import { Logo } from "@/components/ui/Logo";
+import { ChangePasswordModal } from "@/components/admin/ChangePasswordModal";
 
 function LoginForm() {
   const router = useRouter();
@@ -17,6 +18,7 @@ function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -147,6 +149,18 @@ function LoginForm() {
               </div>
             </div>
 
+            {/* Change Password Link */}
+            <div className="flex items-center justify-end -mt-1">
+              <button
+                type="button"
+                onClick={() => setChangePasswordOpen(true)}
+                className="text-xs font-bold text-[#16A34A] hover:text-[#15803D] hover:underline cursor-pointer inline-flex items-center gap-1 transition-colors"
+              >
+                <KeyRound className="w-3.5 h-3.5" />
+                <span>Change Password?</span>
+              </button>
+            </div>
+
             {/* Submit Button */}
             <button
               type="submit"
@@ -173,6 +187,13 @@ function LoginForm() {
             <span>Authorized access only. All sessions are audited.</span>
           </div>
         </div>
+
+        {/* Change Password Modal */}
+        <ChangePasswordModal
+          isOpen={changePasswordOpen}
+          onClose={() => setChangePasswordOpen(false)}
+          userEmail={email}
+        />
 
         {/* Back to public website */}
         <div className="mt-6 text-center">

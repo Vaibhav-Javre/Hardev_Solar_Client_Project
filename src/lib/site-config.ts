@@ -122,4 +122,48 @@ export function getSecondaryPhoneCallUrl(): string {
   return `tel:+91${SITE_CONFIG.secondaryPhone}`;
 }
 
+/**
+ * Generates an official WhatsApp click-to-chat URL to message a specific customer/lead directly
+ */
+export function getCustomerWhatsAppUrl(
+  phone?: string,
+  customerName?: string,
+  serviceName?: string
+): string {
+  if (!phone) return "#";
+  let digits = phone.replace(/\D/g, "");
+  if (!digits) return "#";
+  if (digits.length === 10) {
+    digits = `91${digits}`;
+  } else if (digits.length === 11 && digits.startsWith("0")) {
+    digits = `91${digits.slice(1)}`;
+  } else if (digits.length === 12 && digits.startsWith("91")) {
+    // already starts with 91
+  }
+  const name = customerName?.trim() || "Customer";
+  const service = serviceName?.trim() || "solar consultation";
+  const text = `Hello ${name}, thank you for contacting Hardev Solar Services. We are following up regarding your ${service} inquiry. How can we assist you today?`;
+  return `https://wa.me/${digits}?text=${encodeURIComponent(text)}`;
+}
+
+/**
+ * Generates a clean phone dialer URL to call a specific customer/lead directly
+ */
+export function getCustomerPhoneCallUrl(rawPhone?: string): string {
+  if (!rawPhone) return "#";
+  let digits = rawPhone.replace(/\D/g, "");
+  if (!digits) return "#";
+  if (digits.length === 10) {
+    return `tel:+91${digits}`;
+  }
+  if (digits.length === 11 && digits.startsWith("0")) {
+    return `tel:+91${digits.slice(1)}`;
+  }
+  if (digits.length === 12 && digits.startsWith("91")) {
+    return `tel:+${digits}`;
+  }
+  return `tel:+${digits}`;
+}
+
 export default SITE_CONFIG;
+

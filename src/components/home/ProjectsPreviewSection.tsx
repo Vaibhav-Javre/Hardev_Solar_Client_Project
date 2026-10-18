@@ -65,48 +65,48 @@ export const ProjectsGallery: React.FC = () => {
               className="bg-white rounded-3xl border-2 border-[#DCFCE7] overflow-hidden shadow-sm hover:shadow-xl hover:shadow-[#16A34A]/10 hover:border-[#86EFAC] transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
             >
               <div>
-                {/* Visual Technical Header / Project Image */}
-                <div className="relative h-56 bg-gradient-to-br from-[#16A34A] via-[#15803D] to-[#065F46] p-5 flex flex-col justify-between overflow-hidden text-white">
-                  {/* Solar Blueprint Graphic Overlay */}
-                  <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#FACC15_1px,transparent_1px)] [background-size:16px_16px]" />
+                {/* Project Image with Glassmorphic Badges */}
+                <div className="relative h-60 overflow-hidden text-white bg-slate-900 group">
+                  {project.imageSrc ? (
+                    <img
+                      src={project.imageSrc}
+                      alt={project.title}
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#16A34A] to-[#065F46]" />
+                  )}
 
-                  {/* Top Badges: Project Type & Scope */}
-                  <div className="relative z-10 flex items-center justify-between">
-                    <span className="text-xs font-black px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-[#FEF08A] border border-white/30 shadow-xs">
-                      {project.category}
-                    </span>
-                    <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-black/20 text-[#DCFCE7] border border-white/20">
-                      3 kW to 50 kW Scope
-                    </span>
-                  </div>
+                  {/* Gradient Overlay for Crisp Text Readability */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-black/30 pointer-events-none" />
 
-                  {/* Center Architectural Icon & Image Container */}
-                  <div className="relative z-10 my-auto text-center flex flex-col items-center justify-center">
-                    <div className="w-12 h-12 rounded-2xl bg-white/15 backdrop-blur-sm border border-white/30 flex items-center justify-center text-[#FACC15] mb-2 group-hover:scale-110 transition-transform">
-                      {project.imageSrc ? (
-                        <ImageIcon className="w-6 h-6 text-white" />
-                      ) : (
-                        <Sun className="w-6 h-6 stroke-[2.3]" />
-                      )}
-                    </div>
-                    <span className="text-[11px] font-medium text-white/90 tracking-wide">
-                      {project.imageSrc ? "Installed Site Photograph" : "Verified Solar Installation"}
-                    </span>
-                  </div>
-
-                  {/* Bottom System Capacity */}
-                  <div className="relative z-10 flex items-center justify-between border-t border-white/20 pt-2">
-                    <div className="flex items-baseline gap-1.5 text-white">
-                      <span className="text-2xl font-black text-[#FACC15] font-mono">
-                        {project.systemCapacity}
+                  {/* Badges and Info */}
+                  <div className="relative z-10 p-4 sm:p-5 h-full flex flex-col justify-between">
+                    {/* Top Badges */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-black px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-[#FEF08A] border border-white/30 shadow-xs">
+                        {project.category}
                       </span>
-                      <span className="text-[10px] uppercase font-bold tracking-wider text-[#DCFCE7]">
-                        System Capacity
+                      <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-black/40 backdrop-blur-md text-[#DCFCE7] border border-white/20">
+                        3 kW to 50 kW Scope
                       </span>
                     </div>
-                    <span className="text-[10px] font-medium text-white/80">
-                      On-Grid System
-                    </span>
+
+                    {/* Bottom System Capacity */}
+                    <div className="flex items-end justify-between border-t border-white/20 pt-2.5">
+                      <div className="flex items-baseline gap-1.5 text-white">
+                        <span className="text-2xl font-black text-[#FACC15] font-mono drop-shadow-md">
+                          {project.systemCapacity}
+                        </span>
+                        <span className="text-[10px] uppercase font-bold tracking-wider text-[#DCFCE7] drop-shadow-xs">
+                          System Capacity
+                        </span>
+                      </div>
+                      <span className="text-[11px] font-semibold text-white/95 bg-black/40 px-2.5 py-0.5 rounded-full backdrop-blur-xs border border-white/10">
+                        On-Grid System
+                      </span>
+                    </div>
                   </div>
                 </div>
 

@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 
 import { Logo } from "@/components/ui/Logo";
+import { LanguageSelector } from "@/components/ui/LanguageSelector";
 
 export const Footer: React.FC = () => {
   const pathname = usePathname();
@@ -226,7 +227,7 @@ export const Footer: React.FC = () => {
             © {new Date().getFullYear()} Hardev Solar Services, in partnership with Swayam Infraverse. All rights reserved.
           </div>
 
-          <div className="flex flex-wrap items-center gap-6">
+          <div className="flex flex-wrap items-center gap-4 sm:gap-6">
             <Link href="/faq" className="hover:text-[#16A34A] transition-colors">
               FAQ
             </Link>
@@ -238,6 +239,8 @@ export const Footer: React.FC = () => {
             <Link href="/services" className="hover:text-[#16A34A] transition-colors">
               Services
             </Link>
+            <span className="text-[#86EFAC]">•</span>
+            <LanguageSelector variant="topbar" />
           </div>
         </div>
 

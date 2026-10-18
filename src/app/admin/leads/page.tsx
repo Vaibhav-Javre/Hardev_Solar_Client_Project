@@ -24,7 +24,7 @@ import {
   ArrowUpDown,
 } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
-import { getWhatsAppUrl } from "@/lib/site-config";
+import { getCustomerWhatsAppUrl, getCustomerPhoneCallUrl } from "@/lib/site-config";
 
 interface LeadItem {
   _id: string;
@@ -420,7 +420,7 @@ function LeadsContent() {
                           </div>
                           <div className="flex items-center gap-2 mt-1">
                             <a
-                              href={`tel:+91${lead.phone}`}
+                              href={getCustomerPhoneCallUrl(lead.phone)}
                               className="inline-flex items-center gap-1 text-[11px] font-bold text-[#16A34A] hover:underline"
                             >
                               <Phone className="w-3 h-3" />
@@ -428,8 +428,10 @@ function LeadsContent() {
                             </a>
                             <span className="text-slate-300">•</span>
                             <a
-                              href={getWhatsAppUrl(
-                                `Hello ${lead.fullName}, this is Hardev Solar Services following up on your solar consultation request.`
+                              href={getCustomerWhatsAppUrl(
+                                lead.phone,
+                                lead.fullName,
+                                lead.interestedService
                               )}
                               target="_blank"
                               rel="noopener noreferrer"
@@ -566,7 +568,17 @@ function LeadsContent() {
                   <h3 className="text-xl sm:text-2xl font-black text-[#0F291E]">
                     {selectedLead.fullName}
                   </h3>
-                  <p className="text-xs text-[#475569]">
+                  <div className="flex flex-wrap items-center gap-2 mt-1 text-xs">
+                    <span className="font-mono font-bold text-[#16A34A] bg-[#F0FDF4] px-2 py-0.5 rounded-md border border-[#BBF7D0]">
+                      +91 {selectedLead.phone}
+                    </span>
+                    {selectedLead.email && (
+                      <span className="text-[#475569] bg-slate-100 px-2 py-0.5 rounded-md">
+                        {selectedLead.email}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-[#64748B] mt-1.5">
                     Submitted on{" "}
                     {new Date(selectedLead.createdAt).toLocaleString("en-IN", {
                       dateStyle: "medium",
@@ -622,16 +634,18 @@ function LeadsContent() {
               {/* Direct Actions: Call, WhatsApp, Email */}
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                 <a
-                  href={`tel:+91${selectedLead.phone}`}
-                  className="py-2.5 px-3 rounded-xl bg-[#F0FDF4] hover:bg-[#DCFCE7] text-[#15803D] font-bold text-xs flex items-center justify-center gap-2 border border-[#BBF7D0] transition-colors"
+                  href={getCustomerPhoneCallUrl(selectedLead.phone)}
+                  className="py-2.5 px-3 rounded-xl bg-[#F0FDF4] hover:bg-[#DCFCE7] text-[#15803D] font-bold text-xs flex items-center justify-center gap-2 border border-[#BBF7D0] transition-colors shadow-2xs"
                 >
                   <Phone className="w-4 h-4" />
                   <span>Call Customer</span>
                 </a>
 
                 <a
-                  href={getWhatsAppUrl(
-                    `Hello ${selectedLead.fullName}, thank you for contacting Hardev Solar Services. We are ready to assist with your ${selectedLead.interestedService || "solar"} requirements.`
+                  href={getCustomerWhatsAppUrl(
+                    selectedLead.phone,
+                    selectedLead.fullName,
+                    selectedLead.interestedService
                   )}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -654,6 +668,27 @@ function LeadsContent() {
 
               {/* Detailed Specs Grid */}
               <div className="grid grid-cols-2 gap-4 text-xs pt-2 border-t border-[#DCFCE7]">
+                <div>
+                  <span className="text-[#64748B] font-bold block uppercase text-[10px]">
+                    Customer Phone
+                  </span>
+                  <a
+                    href={getCustomerPhoneCallUrl(selectedLead.phone)}
+                    className="font-mono font-extrabold text-[#16A34A] text-sm hover:underline"
+                  >
+                    +91 {selectedLead.phone}
+                  </a>
+                </div>
+
+                <div>
+                  <span className="text-[#64748B] font-bold block uppercase text-[10px]">
+                    Customer Email
+                  </span>
+                  <span className="font-extrabold text-[#0F291E] text-xs">
+                    {selectedLead.email || "Not provided"}
+                  </span>
+                </div>
+
                 <div>
                   <span className="text-[#64748B] font-bold block uppercase text-[10px]">
                     City / Location
@@ -680,6 +715,7 @@ function LeadsContent() {
                     {selectedLead.interestedService}
                   </span>
                 </div>
+
 
                 <div>
                   <span className="text-[#64748B] font-bold block uppercase text-[10px]">
