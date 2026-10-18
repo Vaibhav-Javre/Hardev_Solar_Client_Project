@@ -72,7 +72,7 @@ export default function RootLayout({
       <head>
         <JsonLd />
       </head>
-      <body className={`min-h-full flex flex-col bg-white text-[#123524] ${inter.variable} font-sans antialiased pb-16 lg:pb-0`}>
+      <body className={`min-h-full flex flex-col bg-white text-[#123524] ${inter.variable} font-sans antialiased pb-24 lg:pb-0`}>
         <LanguageProvider>
           <Navbar />
           <main className="flex-1">{children}</main>

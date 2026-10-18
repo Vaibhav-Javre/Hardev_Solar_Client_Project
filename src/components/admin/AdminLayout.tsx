@@ -281,6 +281,16 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
           </div>
         </header>
 
+        {/* Mobile Page Title Strip */}
+        <div className="lg:hidden px-4 pt-4 pb-1">
+          <h1 className="text-lg font-black text-[#0F291E] tracking-tight">
+            {title || "Dashboard Overview"}
+          </h1>
+          {subtitle && (
+            <p className="text-xs text-[#475569] mt-0.5">{subtitle}</p>
+          )}
+        </div>
+
         {/* Page body */}
         <div className="flex-1 p-4 sm:p-6 lg:p-8">{children}</div>
       </main>

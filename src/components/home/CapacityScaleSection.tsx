@@ -105,10 +105,10 @@ export const CapacityScaleSection: React.FC = () => {
         </div>
 
         {/* Visual Horizontal Interactive Capacity Scale */}
-        <div className="bg-[#F0FDF4] rounded-3xl p-6 sm:p-10 border-2 border-[#DCFCE7] shadow-lg shadow-[#16A34A]/5">
+        <div className="bg-[#F0FDF4] rounded-3xl p-4 sm:p-8 md:p-10 border-2 border-[#DCFCE7] shadow-lg shadow-[#16A34A]/5">
           {/* Visual Scale Tabs: 3 kW, 5 kW, 10 kW, 20 kW, 30 kW, 50 kW */}
-          <div className="mb-10">
-            <div className="flex items-center justify-between text-xs font-bold text-[#15803D] mb-3 px-1 uppercase tracking-wider">
+          <div className="mb-8 sm:mb-10">
+            <div className="flex items-center justify-between text-[11px] sm:text-xs font-bold text-[#15803D] mb-3 px-1 uppercase tracking-wider">
               <span>Residential Range</span>
               <span>Commercial & Industrial Range</span>
             </div>
@@ -121,9 +121,9 @@ export const CapacityScaleSection: React.FC = () => {
                   <button
                     key={tier.kw}
                     onClick={() => setSelectedKw(tier.kw)}
-                    className={`relative py-4 px-2 rounded-2xl flex flex-col items-center justify-center transition-all cursor-pointer font-bold ${
+                    className={`relative py-3 sm:py-4 px-2 rounded-2xl flex flex-col items-center justify-center transition-all cursor-pointer font-bold ${
                       isSelected
-                        ? "bg-[#16A34A] text-white shadow-lg shadow-[#16A34A]/25 scale-105 border-2 border-[#86EFAC]"
+                        ? "bg-[#16A34A] text-white shadow-lg shadow-[#16A34A]/25 sm:scale-105 border-2 border-[#86EFAC]"
                         : "bg-white text-[#0F291E] hover:bg-[#DCFCE7] border border-[#BBF7D0]"
                     }`}
                   >
@@ -139,7 +139,7 @@ export const CapacityScaleSection: React.FC = () => {
                     </span>
 
                     {isSelected && (
-                      <span className="absolute -bottom-2 w-3 h-3 bg-[#16A34A] rotate-45 border-r border-b border-[#86EFAC]" />
+                      <span className="hidden sm:block absolute -bottom-2 w-3 h-3 bg-[#16A34A] rotate-45 border-r border-b border-[#86EFAC]" />
                     )}
                   </button>
                 );
@@ -148,7 +148,7 @@ export const CapacityScaleSection: React.FC = () => {
           </div>
 
           {/* Detailed Spec Panel for Selected Tier */}
-          <div className="bg-white rounded-2xl p-6 sm:p-8 border border-[#DCFCE7] shadow-sm">
+          <div className="bg-white rounded-2xl p-4 sm:p-8 border border-[#DCFCE7] shadow-sm">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               {/* Left Column */}
               <div className="lg:col-span-5 space-y-4">
@@ -158,15 +158,15 @@ export const CapacityScaleSection: React.FC = () => {
                 </div>
 
                 <div className="flex items-baseline gap-3">
-                  <span className="text-5xl font-black text-[#0F291E]">
+                  <span className="text-4xl sm:text-5xl font-black text-[#0F291E]">
                     {currentTier.kw}
                   </span>
-                  <span className="text-sm font-bold text-[#475569] uppercase tracking-wide">
+                  <span className="text-xs sm:text-sm font-bold text-[#475569] uppercase tracking-wide">
                     Installation Tier
                   </span>
                 </div>
 
-                <h3 className="text-lg font-extrabold text-[#0F291E]">
+                <h3 className="text-base sm:text-lg font-extrabold text-[#0F291E]">
                   {currentTier.recommendedFor}
                 </h3>
 
@@ -178,7 +178,7 @@ export const CapacityScaleSection: React.FC = () => {
                   <a
                     href="/#consultation"
                     onClick={scrollToQuote}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#16A34A] hover:bg-[#15803D] text-white text-xs font-extrabold shadow-sm transition-all cursor-pointer"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#16A34A] hover:bg-[#15803D] text-white text-xs sm:text-sm font-extrabold shadow-sm transition-all cursor-pointer"
                   >
                     <span>Request Quote for {currentTier.kw}</span>
                     <ArrowRight className="w-4 h-4 text-white" />

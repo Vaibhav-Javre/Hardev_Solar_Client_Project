@@ -131,7 +131,7 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({
   return (
     <div
       id={id}
-      className={`bg-white rounded-3xl shadow-xl shadow-[#16A34A]/8 border-2 border-[#DCFCE7] p-6 sm:p-8 md:p-9 ${className}`}
+      className={`bg-white rounded-3xl shadow-xl shadow-[#16A34A]/8 border-2 border-[#DCFCE7] p-5 sm:p-8 md:p-9 ${className}`}
     >
       {/* Header */}
       <div className="mb-6">
@@ -139,7 +139,7 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({
           <span className="w-2 h-2 rounded-full bg-[#16A34A] animate-pulse" />
           <span>Zero Obligation Rooftop Survey</span>
         </div>
-        <h3 className="text-2xl sm:text-3xl font-black text-[#0F291E] tracking-tight">
+        <h3 className="text-xl sm:text-3xl font-black text-[#0F291E] tracking-tight">
           Request a Quote from Hardev Solar Services
         </h3>
         <p className="text-[#475569] text-xs sm:text-sm mt-1.5 leading-relaxed">
@@ -255,14 +255,17 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({
             Monthly Electricity Bill
           </label>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            {BILL_OPTIONS.map((opt) => {
+            {BILL_OPTIONS.map((opt, idx) => {
               const isSelected = selectedBill === opt;
+              const isLastOdd = idx === BILL_OPTIONS.length - 1 && BILL_OPTIONS.length % 2 === 1;
               return (
                 <button
                   type="button"
                   key={opt}
                   onClick={() => setValue("monthlyBill", opt, { shouldValidate: true })}
                   className={`py-2 px-2.5 rounded-xl text-xs font-bold border text-center transition-all cursor-pointer ${
+                    isLastOdd ? "col-span-2 sm:col-span-1" : ""
+                  } ${
                     isSelected
                       ? "bg-[#16A34A] text-white border-[#16A34A] shadow-sm font-extrabold"
                       : "bg-[#F0FDF4] text-[#0F291E] border-[#DCFCE7] hover:bg-[#DCFCE7]"

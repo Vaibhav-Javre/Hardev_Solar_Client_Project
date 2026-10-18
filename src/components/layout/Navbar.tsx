@@ -108,8 +108,10 @@ export const Navbar: React.FC = () => {
               <MessageCircle className="w-3.5 h-3.5" />
               <span>{t("nav.whatsapp", "WhatsApp Us")}</span>
             </a>
-            <span className="text-[#86EFAC]">|</span>
-            <LanguageSelector variant="topbar" />
+            <span className="text-[#86EFAC] hidden sm:inline">|</span>
+            <div className="hidden sm:inline-flex">
+              <LanguageSelector variant="topbar" />
+            </div>
           </div>
         </div>
       </div>

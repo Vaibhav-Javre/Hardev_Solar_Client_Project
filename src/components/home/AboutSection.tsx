@@ -76,15 +76,15 @@ export const AboutSection: React.FC = () => {
               ))}
             </div>
 
-            <div className="pt-4 flex flex-wrap gap-4 items-center">
-              <Button href="/#consultation" variant="primary" size="md">
+            <div className="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5">
+              <Button href="/#consultation" variant="primary" size="md" className="w-full sm:w-auto justify-center">
                 <span>Get a Free Consultation</span>
                 <ArrowRight className="w-4 h-4 text-white" />
               </Button>
 
               <Link
                 href="/about"
-                className="text-sm font-extrabold text-[#16A34A] hover:text-[#15803D] underline underline-offset-4 decoration-[#86EFAC]"
+                className="text-sm font-extrabold text-[#16A34A] hover:text-[#15803D] underline underline-offset-4 decoration-[#86EFAC] text-center py-2 sm:py-0"
               >
                 Learn More About Hardev Solar Services →
               </Link>

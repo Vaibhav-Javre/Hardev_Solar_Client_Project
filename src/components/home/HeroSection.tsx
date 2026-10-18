@@ -22,8 +22,8 @@ export const HeroSection: React.FC = () => {
         backgroundRepeat: "no-repeat",
       }}
     >
-      {/* Light, subtle gradient overlay on the left text area only - keeps the sunny rooftop, workers, and sky bright and clearly visible */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/45 via-black/20 to-transparent pointer-events-none" />
+      {/* Protective gradient overlay: on mobile a rich dark overlay eliminates background image text clash and ensures full readability; on desktop keeps sunny rooftop & sky bright */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/65 to-black/85 lg:bg-gradient-to-r lg:from-black/75 lg:via-black/45 lg:to-black/15 pointer-events-none" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center">
@@ -53,23 +53,23 @@ export const HeroSection: React.FC = () => {
 
               <Link
                 href="#solutions"
-                className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-white/20 backdrop-blur-sm hover:bg-white/30 active:bg-white/35 text-white font-bold text-sm sm:text-base border border-white/40 shadow-sm transition-all"
+                className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-white/20 backdrop-blur-sm hover:bg-white/30 active:bg-white/35 text-white font-bold text-sm sm:text-base border border-white/40 shadow-sm transition-all text-center"
               >
                 <span>Explore Solar Solutions</span>
               </Link>
             </div>
 
             {/* 3 Compact Feature Labels */}
-            <div className="pt-2 flex flex-wrap items-center gap-2 text-xs font-semibold text-white">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/30 backdrop-blur-sm border border-white/15 shadow-xs">
+            <div className="pt-2 grid grid-cols-1 sm:flex sm:flex-wrap items-stretch sm:items-center gap-2 text-xs font-semibold text-white">
+              <div className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-black/40 backdrop-blur-md border border-white/20 shadow-xs">
                 <Wrench className="w-3.5 h-3.5 text-[#4ADE80] shrink-0" />
                 <span>Professional Installation</span>
               </div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/30 backdrop-blur-sm border border-white/15 shadow-xs">
+              <div className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-black/40 backdrop-blur-md border border-white/20 shadow-xs">
                 <ShieldCheck className="w-3.5 h-3.5 text-[#4ADE80] shrink-0" />
                 <span>Quality Solar Systems</span>
               </div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/30 backdrop-blur-sm border border-white/15 shadow-xs">
+              <div className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-black/40 backdrop-blur-md border border-white/20 shadow-xs">
                 <Compass className="w-3.5 h-3.5 text-[#4ADE80] shrink-0" />
                 <span>Maharashtra-Wide Service</span>
               </div>
@@ -77,7 +77,7 @@ export const HeroSection: React.FC = () => {
           </div>
 
           {/* Right Column: Existing Quote / Consultation Form */}
-          <div className="lg:col-span-5 relative">
+          <div className="lg:col-span-5 relative mt-6 lg:mt-0">
             <div className="relative mx-auto max-w-md lg:max-w-none">
               <div className="shadow-2xl rounded-3xl overflow-hidden">
                 <ConsultationForm id="hero-consultation" />

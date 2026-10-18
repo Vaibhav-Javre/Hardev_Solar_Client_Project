@@ -274,10 +274,10 @@ function LeadsContent() {
           </div>
 
           {/* Filters Row */}
-          <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-[#DCFCE7]/70 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-3 border-t border-[#DCFCE7]/70 text-xs">
             {/* Status Filter */}
-            <div className="flex items-center gap-1.5">
-              <span className="font-extrabold uppercase tracking-wider text-[11px] text-[#475569]">
+            <div className="flex items-center justify-between sm:justify-start gap-2 bg-[#F0FDF4] px-3 py-2 rounded-xl border border-[#DCFCE7]">
+              <span className="font-extrabold uppercase tracking-wider text-[11px] text-[#475569] shrink-0">
                 Status:
               </span>
               <select
@@ -286,7 +286,7 @@ function LeadsContent() {
                   setStatusFilter(e.target.value);
                   setPage(1);
                 }}
-                className="py-1.5 px-3 bg-[#F0FDF4] border border-[#DCFCE7] rounded-xl font-bold text-[#0F291E] focus:outline-none focus:ring-2 focus:ring-[#16A34A]"
+                className="w-full sm:w-auto bg-transparent font-bold text-[#0F291E] focus:outline-none cursor-pointer"
               >
                 <option value="ALL">All Statuses</option>
                 {STATUS_OPTIONS.map((st) => (
@@ -298,8 +298,8 @@ function LeadsContent() {
             </div>
 
             {/* Property Type Filter */}
-            <div className="flex items-center gap-1.5">
-              <span className="font-extrabold uppercase tracking-wider text-[11px] text-[#475569]">
+            <div className="flex items-center justify-between sm:justify-start gap-2 bg-[#F0FDF4] px-3 py-2 rounded-xl border border-[#DCFCE7]">
+              <span className="font-extrabold uppercase tracking-wider text-[11px] text-[#475569] shrink-0">
                 Property:
               </span>
               <select
@@ -308,7 +308,7 @@ function LeadsContent() {
                   setPropertyFilter(e.target.value);
                   setPage(1);
                 }}
-                className="py-1.5 px-3 bg-[#F0FDF4] border border-[#DCFCE7] rounded-xl font-bold text-[#0F291E] focus:outline-none focus:ring-2 focus:ring-[#16A34A]"
+                className="w-full sm:w-auto bg-transparent font-bold text-[#0F291E] focus:outline-none cursor-pointer"
               >
                 <option value="ALL">All Types</option>
                 <option value="Residential">Residential</option>
@@ -318,15 +318,17 @@ function LeadsContent() {
             </div>
 
             {/* Sort Order */}
-            <div className="flex items-center gap-1.5 ml-auto">
-              <ArrowUpDown className="w-3.5 h-3.5 text-[#16A34A]" />
-              <span className="font-extrabold uppercase tracking-wider text-[11px] text-[#475569]">
-                Sort:
-              </span>
+            <div className="flex items-center justify-between sm:justify-start gap-2 bg-[#F0FDF4] px-3 py-2 rounded-xl border border-[#DCFCE7]">
+              <div className="flex items-center gap-1.5 shrink-0">
+                <ArrowUpDown className="w-3.5 h-3.5 text-[#16A34A]" />
+                <span className="font-extrabold uppercase tracking-wider text-[11px] text-[#475569]">
+                  Sort:
+                </span>
+              </div>
               <select
                 value={sortOrder}
                 onChange={(e) => setSortOrder(e.target.value as any)}
-                className="py-1.5 px-3 bg-[#F0FDF4] border border-[#DCFCE7] rounded-xl font-bold text-[#0F291E] focus:outline-none focus:ring-2 focus:ring-[#16A34A]"
+                className="w-full sm:w-auto bg-transparent font-bold text-[#0F291E] focus:outline-none cursor-pointer"
               >
                 <option value="newest">Newest First</option>
                 <option value="oldest">Oldest First</option>
@@ -359,8 +361,119 @@ function LeadsContent() {
           </div>
         ) : (
           <div className="bg-white rounded-3xl border-2 border-[#DCFCE7] shadow-xs overflow-hidden">
-            {/* Table */}
-            <div className="overflow-x-auto">
+            {/* Mobile Card List (Dedicated for phones < md screens) */}
+            <div className="block md:hidden divide-y divide-[#DCFCE7]/70">
+              {leads.map((lead) => {
+                const badge = STATUS_BADGES[lead.status] || STATUS_BADGES.NEW;
+                const dateStr = new Date(lead.createdAt).toLocaleDateString("en-IN", {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                });
+
+                return (
+                  <div key={lead._id} className="p-4 space-y-3 hover:bg-[#F0FDF4]/30 transition-colors">
+                    {/* Top Row: Name + Badges */}
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedLead(lead)}
+                          className="text-left font-black text-sm text-[#0F291E] hover:text-[#16A34A] transition-colors cursor-pointer"
+                        >
+                          {lead.fullName}
+                        </button>
+                        {lead.email && (
+                          <div className="text-[11px] text-[#475569] truncate max-w-[200px]">
+                            {lead.email}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        {lead.calculatorUsed && (
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-extrabold bg-[#DCFCE7] text-[#15803D] border border-[#BBF7D0]">
+                            Calc
+                          </span>
+                        )}
+                        <span
+                          className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-extrabold border ${badge.bg} ${badge.text} ${badge.border}`}
+                        >
+                          {lead.status}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Quick Call & WhatsApp Action Buttons */}
+                    <div className="grid grid-cols-2 gap-2">
+                      <a
+                        href={getCustomerPhoneCallUrl(lead.phone)}
+                        className="inline-flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl bg-[#F0FDF4] hover:bg-[#DCFCE7] text-[#15803D] font-bold text-xs border border-[#BBF7D0] transition-colors"
+                      >
+                        <Phone className="w-3.5 h-3.5" />
+                        <span>Call Customer</span>
+                      </a>
+                      <a
+                        href={getCustomerWhatsAppUrl(
+                          lead.phone,
+                          lead.fullName,
+                          lead.interestedService
+                        )}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl bg-[#16A34A] hover:bg-[#15803D] text-white font-bold text-xs transition-colors shadow-2xs"
+                      >
+                        <MessageCircle className="w-3.5 h-3.5 fill-white text-[#16A34A]" />
+                        <span>WhatsApp</span>
+                      </a>
+                    </div>
+
+                    {/* Metadata Grid */}
+                    <div className="grid grid-cols-3 gap-2 p-2.5 rounded-xl bg-[#F8FAFC] border border-[#DCFCE7]/60 text-[11px]">
+                      <div>
+                        <div className="text-[#64748B] font-semibold text-[10px] uppercase">City</div>
+                        <div className="font-bold text-[#0F291E] truncate">{lead.city}</div>
+                      </div>
+                      <div>
+                        <div className="text-[#64748B] font-semibold text-[10px] uppercase">Property</div>
+                        <div className="font-bold text-[#0F291E] truncate">{lead.propertyType}</div>
+                      </div>
+                      <div>
+                        <div className="text-[#64748B] font-semibold text-[10px] uppercase">Bill</div>
+                        <div className="font-bold text-[#0F291E] truncate">{lead.monthlyElectricityBill || "—"}</div>
+                      </div>
+                    </div>
+
+                    {/* Bottom Actions Row */}
+                    <div className="flex items-center justify-between pt-1 text-xs">
+                      <span className="text-[11px] text-[#64748B]">
+                        {dateStr}
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setDeleteConfirmLead(lead)}
+                          className="p-1.5 rounded-lg hover:bg-red-50 text-red-600 transition-colors"
+                          title="Delete Lead"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedLead(lead)}
+                          className="px-3 py-1.5 rounded-lg bg-[#16A34A] hover:bg-[#15803D] text-white text-xs font-bold transition-colors shadow-2xs cursor-pointer"
+                        >
+                          Review Lead
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Desktop Table (Hidden on mobile screens, shown on md and above) */}
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left text-xs sm:text-sm">
                 <thead className="bg-[#F8FAFC] border-b border-[#DCFCE7] text-[#475569] font-extrabold text-[11px] uppercase tracking-wider">
                   <tr>
