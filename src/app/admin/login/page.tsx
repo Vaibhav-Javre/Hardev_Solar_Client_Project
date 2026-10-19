@@ -7,6 +7,7 @@ import { Lock, Mail, Sun, ArrowRight, Eye, EyeOff, Loader2, ShieldCheck, AlertCi
 import { SITE_CONFIG } from "@/lib/site-config";
 import { Logo } from "@/components/ui/Logo";
 import { ChangePasswordModal } from "@/components/admin/ChangePasswordModal";
+import { LanguageSelector } from "@/components/ui/LanguageSelector";
 
 function LoginForm() {
   const router = useRouter();
@@ -90,6 +91,11 @@ function LoginForm() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#F0FDF4] via-white to-[#F0FDF4] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 text-[#0F291E] relative overflow-hidden">
+      {/* Top Language Switcher Bar */}
+      <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20">
+        <LanguageSelector variant="topbar" />
+      </div>
+
       {/* Background Glow */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-[#DCFCE7]/60 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#BBF7D0]/40 rounded-full blur-3xl pointer-events-none" />

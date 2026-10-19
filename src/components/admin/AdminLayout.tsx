@@ -11,7 +11,6 @@ import {
   LogOut,
   Menu,
   X,
-  Sun,
   ExternalLink,
   ShieldCheck,
   ChevronRight,
@@ -20,6 +19,8 @@ import {
 import { SITE_CONFIG } from "@/lib/site-config";
 import { Logo } from "@/components/ui/Logo";
 import { ChangePasswordModal } from "@/components/admin/ChangePasswordModal";
+import { LanguageSelector } from "@/components/ui/LanguageSelector";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -29,24 +30,28 @@ interface AdminLayoutProps {
 
 const NAV_ITEMS = [
   {
+    key: "admin.nav.dashboard",
     label: "Dashboard",
     href: "/admin",
     icon: LayoutDashboard,
     badge: null,
   },
   {
+    key: "admin.nav.leads",
     label: "Leads Management",
     href: "/admin/leads",
     icon: Users,
     badge: null,
   },
   {
+    key: "admin.nav.projects",
     label: "Projects",
     href: "/admin/projects",
     icon: FolderKanban,
     badge: null,
   },
   {
+    key: "admin.nav.testimonials",
     label: "Testimonials",
     href: "/admin/testimonials",
     icon: MessageSquareQuote,
@@ -59,6 +64,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   title,
   subtitle,
 }) => {
+  const { t } = useLanguage();
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -109,6 +115,9 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
         </Link>
 
         <div className="flex items-center gap-2">
+          {/* Mobile Language Switcher */}
+          <LanguageSelector variant="topbar" />
+
           <button
             type="button"
             onClick={() => setChangePasswordOpen(true)}
@@ -145,14 +154,14 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
           mobileOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"
         }`}
       >
-        <div>
+        <div className="overflow-y-auto flex-1">
           {/* Brand header */}
           <div className="p-5 border-b border-[#DCFCE7] flex items-center justify-between">
             <Link href="/admin" className="flex flex-col gap-1.5 group">
               <Logo className="h-9 w-auto group-hover:opacity-95 transition-opacity" />
               <div className="text-[10px] font-extrabold uppercase tracking-wider text-[#16A34A] flex items-center gap-1.5 pl-0.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A]" />
-                Admin Workspace
+                <span>{t("admin.workspace", "Admin Workspace")}</span>
               </div>
             </Link>
             <button
@@ -167,7 +176,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
           {/* Nav links */}
           <nav className="p-4 space-y-1.5">
             <div className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-[#64748B]">
-              Management Navigation
+              {t("admin.nav.management", "Management Navigation")}
             </div>
             {NAV_ITEMS.map((item) => {
               const Icon = item.icon;
@@ -189,22 +198,27 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                 >
                   <div className="flex items-center gap-3">
                     <Icon className={`w-4 h-4 ${isActive ? "text-white" : "text-[#16A34A]"}`} />
-                    <span>{item.label}</span>
+                    <span>{t(item.key, item.label)}</span>
                   </div>
                   {isActive && <ChevronRight className="w-3.5 h-3.5 text-white/70" />}
                 </Link>
               );
             })}
           </nav>
+
+          {/* Dedicated Sidebar Language Switcher (Marathi, Hindi, English) */}
+          <div className="px-4 py-3 mx-4 my-2 bg-[#F8FAFC] border border-[#DCFCE7] rounded-2xl">
+            <LanguageSelector variant="sidebar" />
+          </div>
         </div>
 
         {/* Sidebar Footer */}
-        <div className="p-4 border-t border-[#DCFCE7] space-y-3">
+        <div className="p-4 border-t border-[#DCFCE7] space-y-3 shrink-0">
           {/* Current user pill */}
           <div className="p-3 bg-[#F0FDF4] rounded-xl border border-[#BBF7D0]">
             <div className="flex items-center gap-2 text-xs font-bold text-[#0F291E] truncate">
               <ShieldCheck className="w-4 h-4 text-[#16A34A] shrink-0" />
-              <span className="truncate">{currentUser?.name || "Administrator"}</span>
+              <span className="truncate">{currentUser?.name || t("admin.administrator", "Administrator")}</span>
             </div>
             <div className="text-[11px] text-[#475569] truncate mt-0.5 pl-6">
               {currentUser?.email || SITE_CONFIG.email}
@@ -222,7 +236,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
           >
             <div className="flex items-center gap-2.5">
               <KeyRound className="w-4 h-4 text-[#16A34A]" />
-              <span>Change Password</span>
+              <span>{t("admin.changePassword", "Change Password")}</span>
             </div>
           </button>
 
@@ -234,7 +248,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
           >
             <div className="flex items-center gap-2.5">
               <ExternalLink className="w-4 h-4 text-[#16A34A]" />
-              <span>View Public Website</span>
+              <span>{t("admin.viewPublic", "View Public Website")}</span>
             </div>
           </Link>
 
@@ -246,7 +260,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
             className="w-full flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors border border-red-100 cursor-pointer disabled:opacity-60"
           >
             <LogOut className="w-4 h-4" />
-            <span>{isLoggingOut ? "Signing Out..." : "Sign Out"}</span>
+            <span>{isLoggingOut ? t("admin.signingOut", "Signing Out...") : t("admin.signOut", "Sign Out")}</span>
           </button>
         </div>
       </aside>
@@ -257,7 +271,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
         <header className="bg-white border-b border-[#DCFCE7] py-4 px-6 sm:px-8 hidden lg:flex items-center justify-between sticky top-0 z-30 shadow-2xs">
           <div>
             <h1 className="text-xl font-black text-[#0F291E] tracking-tight">
-              {title || "Dashboard Overview"}
+              {title || t("admin.dashboardTitle", "Dashboard Overview")}
             </h1>
             {subtitle && (
               <p className="text-xs text-[#475569] mt-0.5">{subtitle}</p>
@@ -265,18 +279,21 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
           </div>
 
           <div className="flex items-center gap-3">
+            {/* Admin Desktop Header Language Selector */}
+            <LanguageSelector variant="admin" />
+
             <button
               type="button"
               onClick={() => setChangePasswordOpen(true)}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#F0FDF4] hover:bg-[#DCFCE7] text-[#15803D] text-xs font-bold rounded-xl border border-[#BBF7D0] transition-colors cursor-pointer shadow-2xs"
             >
               <KeyRound className="w-3.5 h-3.5" />
-              <span>Change Password</span>
+              <span>{t("admin.changePassword", "Change Password")}</span>
             </button>
 
             <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#DCFCE7] text-[#15803D] text-xs font-bold rounded-full border border-[#BBF7D0]">
               <span className="w-2 h-2 rounded-full bg-[#16A34A] animate-pulse" />
-              <span>Admin Active</span>
+              <span>{t("admin.active", "Admin Active")}</span>
             </span>
           </div>
         </header>
@@ -284,7 +301,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
         {/* Mobile Page Title Strip */}
         <div className="lg:hidden px-4 pt-4 pb-1">
           <h1 className="text-lg font-black text-[#0F291E] tracking-tight">
-            {title || "Dashboard Overview"}
+            {title || t("admin.dashboardTitle", "Dashboard Overview")}
           </h1>
           {subtitle && (
             <p className="text-xs text-[#475569] mt-0.5">{subtitle}</p>
@@ -304,4 +321,3 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
     </div>
   );
 };
-

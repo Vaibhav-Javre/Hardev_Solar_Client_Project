@@ -55,8 +55,21 @@ const DICTIONARY: Record<string, Record<Language, string>> = {
   "cta.requestSimilar": { en: "Request Similar Installation", mr: "अशाच इन्स्टॉलेशनची विनंती करा", hi: "समान इंस्टॉलेशन का अनुरोध करें" },
   "cta.viewProjects": { en: "Explore All Installations", mr: "सर्व प्रकल्प एक्सप्लोर करा", hi: "सभी प्रोजेक्ट्स देखें" },
   "cta.calculateSavings": { en: "Calculate Solar Savings", mr: "सोलर बचत मोजा", hi: "सोलर बचत की गणना करें" },
-  "badge.systemCapacity": { en: "System Capacity", mr: "प्रणाली क्षमता", hi: "सिस्टम क्षमता" },
-  "badge.onGrid": { en: "On-Grid System", mr: "ऑन-ग्रिड प्रणाली", hi: "ऑन-ग्रिड सिस्टम" },
+  // Admin Navigation & Layout
+  "admin.nav.dashboard": { en: "Dashboard", mr: "डॅशबोर्ड", hi: "डैशबोर्ड" },
+  "admin.nav.leads": { en: "Leads Management", mr: "लीड्स व्यवस्थापन", hi: "लीड्स प्रबंधन" },
+  "admin.nav.projects": { en: "Projects", mr: "सोलर प्रकल्प", hi: "सोलर प्रोजेक्ट्स" },
+  "admin.nav.testimonials": { en: "Testimonials", mr: "प्रशंसापत्रे", hi: "प्रशंसापत्र" },
+  "admin.nav.management": { en: "Management Navigation", mr: "व्यवस्थापन मेनू", hi: "प्रबंधन नेविगेशन" },
+  "admin.workspace": { en: "Admin Workspace", mr: "प्रशासक कार्यक्षेत्र", hi: "एडमिन कार्यक्षेत्र" },
+  "admin.changePassword": { en: "Change Password", mr: "पासवर्ड बदला", hi: "पासवर्ड बदलें" },
+  "admin.viewPublic": { en: "View Public Website", mr: "सार्वजनिक वेबसाइट पहा", hi: "पब्लिक वेबसाइट देखें" },
+  "admin.signOut": { en: "Sign Out", mr: "साइन आउट", hi: "साइन आउट" },
+  "admin.signingOut": { en: "Signing Out...", mr: "साइन आउट होत आहे...", hi: "साइन आउट हो रहे हैं..." },
+  "admin.active": { en: "Admin Active", mr: "प्रशासक सक्रिय", hi: "एडमिन सक्रिय" },
+  "admin.language": { en: "Language", mr: "भाषा", hi: "भाषा" },
+  "admin.languageSelect": { en: "Select Language / भाषा निवडा", mr: "भाषा निवडा / Select Language", hi: "भाषा चुनें / Select Language" },
+  "admin.administrator": { en: "Administrator", mr: "प्रशासक", hi: "एडमिनिस्ट्रेटर" },
 };
 
 const LanguageContext = createContext<LanguageContextType>({
@@ -151,6 +164,9 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       if (select) {
         select.value = lang;
         select.dispatchEvent(new Event("change"));
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
       } else {
         // If select isn't available yet, reload so the cookie takes effect on mount
         setTimeout(() => {
