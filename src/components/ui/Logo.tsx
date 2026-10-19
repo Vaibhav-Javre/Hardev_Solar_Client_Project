@@ -11,12 +11,12 @@ interface LogoProps {
 
 /**
  * Shared Hardev Solar Services Logo Component.
- * Uses official brand logo asset with intrinsic aspect ratio preserved (756x330).
+ * Uses official brand logo asset with intrinsic aspect ratio preserved (865x289).
  */
 export const Logo: React.FC<LogoProps> = ({
-  className = "h-11 sm:h-12 w-auto",
-  width = 229,
-  height = 100,
+  className = "h-14 sm:h-16 lg:h-[72px] w-auto",
+  width = 865,
+  height = 289,
   priority = false,
 }) => {
   return (

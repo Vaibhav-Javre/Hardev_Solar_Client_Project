@@ -65,7 +65,7 @@ export const SITE_CONFIG: SiteConfig = {
   description:
     "Hardev Solar Services delivers solar solutions tailored to your home, business, or industrial project. Services available across Maharashtra in partnership with Swayam Infraverse.",
   website: process.env.NEXT_PUBLIC_SITE_URL || "https://hardevsolar.com",
-  logo: "/images/logo.png",
+  logo: "/images/logo1.png",
   phone: "+919822823115",
   displayPhone: "+91 98228 23115",
   whatsapp: "919822823115",

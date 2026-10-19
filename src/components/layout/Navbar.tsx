@@ -120,16 +120,16 @@ export const Navbar: React.FC = () => {
       <header
         className={`sticky top-0 z-50 transition-all duration-300 ${
           isScrolled
-            ? "bg-white/95 backdrop-blur-md shadow-sm border-b border-[#DCFCE7] py-2.5"
-            : "bg-white border-b border-[#F0FDF4] py-3.5"
+            ? "bg-white/95 backdrop-blur-md shadow-sm border-b border-[#DCFCE7] py-2"
+            : "bg-white border-b border-[#F0FDF4] py-2 sm:py-2.5"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
           {/* Logo on Left */}
-          <Link href="/" className="flex items-center gap-3 group">
+          <Link href="/" className="flex items-center group shrink-0">
             <Logo
               priority
-              className="h-11 sm:h-12 w-auto group-hover:opacity-95 transition-opacity"
+              className="h-12 sm:h-14 md:h-16 lg:h-[72px] xl:h-[78px] w-auto group-hover:opacity-95 transition-all"
             />
           </Link>
 
@@ -239,7 +239,7 @@ export const Navbar: React.FC = () => {
           <div className="bg-white rounded-t-3xl p-6 space-y-4 max-h-[85vh] overflow-y-auto border-t-2 border-[#BBF7D0]">
             <div className="flex items-center justify-between pb-3 border-b border-[#DCFCE7]">
               <Link href="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center">
-                <Logo className="h-10 w-auto" />
+                <Logo className="h-12 sm:h-14 w-auto" />
               </Link>
               <button
                 type="button"

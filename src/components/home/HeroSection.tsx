@@ -16,7 +16,7 @@ export const HeroSection: React.FC = () => {
     <section
       className="relative overflow-hidden bg-cover bg-center bg-no-repeat text-white pt-8 pb-12 lg:pt-12 lg:pb-16 border-b border-[#0F291E]/20"
       style={{
-        backgroundImage: "url('/images/hardev-solar-hero.png')",
+        backgroundImage: "url('/images/Solar.png')",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",

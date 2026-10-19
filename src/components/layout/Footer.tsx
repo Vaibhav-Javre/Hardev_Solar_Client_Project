@@ -33,7 +33,7 @@ export const Footer: React.FC = () => {
           {/* Section 1: Hardev Solar Services (Brand Column) */}
           <div className="lg:col-span-2 space-y-4">
             <Link href="/" className="inline-block group">
-              <Logo className="h-12 sm:h-14 w-auto group-hover:opacity-95 transition-opacity" />
+              <Logo className="h-16 sm:h-20 w-auto group-hover:opacity-95 transition-opacity" />
             </Link>
 
             <p className="text-[#475569] text-sm leading-relaxed max-w-sm">
