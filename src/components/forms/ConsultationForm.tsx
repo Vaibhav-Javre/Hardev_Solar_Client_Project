@@ -4,7 +4,20 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { leadFormSchema, LeadFormInput } from "@/lib/validations/lead";
-import { CheckCircle2, Loader2, MapPin, User, ShieldCheck, ArrowRight, Phone, MessageSquare } from "lucide-react";
+import {
+  CheckCircle2,
+  Loader2,
+  MapPin,
+  User,
+  ShieldCheck,
+  ArrowRight,
+  Phone,
+  MessageSquare,
+  Mail,
+  Home,
+  Building2,
+  Factory,
+} from "lucide-react";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { SITE_CONFIG, getPhoneCallUrl } from "@/lib/site-config";
 import { useLeadSubmit } from "@/lib/useLeadSubmit";
@@ -12,6 +25,8 @@ import { useLeadSubmit } from "@/lib/useLeadSubmit";
 interface ConsultationFormProps {
   className?: string;
   id?: string;
+  defaultPropertyType?: "Residential" | "Commercial" | "Other";
+  source?: string;
   onSuccessCallback?: () => void;
 }
 
@@ -26,6 +41,8 @@ const BILL_OPTIONS = [
 export const ConsultationForm: React.FC<ConsultationFormProps> = ({
   className = "",
   id = "consultation",
+  defaultPropertyType = "Residential",
+  source = "homepage",
   onSuccessCallback,
 }) => {
   const [lastSubmittedPhone, setLastSubmittedPhone] = useState("");
@@ -37,7 +54,7 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({
     errorMessage,
     resetState,
   } = useLeadSubmit({
-    defaultSource: "homepage",
+    defaultSource: source,
     onSuccess: () => {
       onSuccessCallback?.();
     },
@@ -55,29 +72,50 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({
     defaultValues: {
       fullName: "",
       phone: "",
+      email: "",
       location: "",
       monthlyBill: "₹2,500 – ₹4,000",
-      propertyType: "Residential",
+      propertyType: defaultPropertyType,
       website: "",
       message: "",
     },
   });
 
   const selectedBill = watch("monthlyBill");
+  const selectedPropertyType = watch("propertyType") || defaultPropertyType;
 
   const onSubmit = async (data: LeadFormInput) => {
+    const selectedProp = data.propertyType || defaultPropertyType;
+    const dynamicService =
+      selectedProp === "Commercial"
+        ? "Commercial Solar"
+        : selectedProp === "Other"
+        ? "General Consultation"
+        : "Residential Solar";
+
     const success = await submitLead({
       ...data,
+      email: data.email?.trim() || undefined,
+      propertyType: selectedProp,
       city: data.location,
       monthlyElectricityBill: data.monthlyBill,
-      interestedService: "Residential Solar",
+      interestedService: dynamicService,
       message: data.message,
-      source: "homepage",
+      source: source,
     });
 
     if (success) {
       setLastSubmittedPhone(data.phone);
-      reset();
+      reset({
+        fullName: "",
+        phone: "",
+        email: "",
+        location: "",
+        monthlyBill: "₹2,500 – ₹4,000",
+        propertyType: defaultPropertyType,
+        website: "",
+        message: "",
+      });
     }
   };
 
@@ -164,6 +202,44 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({
           {...register("website")}
         />
 
+        {/* Property Type (Optional) */}
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-xs font-extrabold uppercase tracking-wider text-[#0F291E]">
+              Property Type <span className="text-[11px] font-normal text-[#64748B] normal-case">(Optional)</span>
+            </label>
+            <span className="text-[11px] font-bold text-[#16A34A] bg-[#F0FDF4] px-2 py-0.5 rounded-md border border-[#DCFCE7]">
+              {selectedPropertyType === "Commercial"
+                ? "Commercial Solar"
+                : selectedPropertyType === "Other"
+                ? "General Consultation"
+                : "Residential Solar"}
+            </span>
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            {(["Residential", "Commercial", "Other"] as const).map((type) => {
+              const isSelected = selectedPropertyType === type;
+              return (
+                <button
+                  type="button"
+                  key={type}
+                  onClick={() => setValue("propertyType", type, { shouldValidate: true })}
+                  className={`py-2 px-2.5 sm:px-3 rounded-xl text-xs sm:text-sm font-bold border text-center transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                    isSelected
+                      ? "bg-[#16A34A] text-white border-[#16A34A] shadow-md shadow-[#16A34A]/20 font-black"
+                      : "bg-[#F0FDF4] text-[#0F291E] border-[#DCFCE7] hover:bg-[#DCFCE7]"
+                  }`}
+                >
+                  {type === "Residential" && <Home className="w-3.5 h-3.5 shrink-0" />}
+                  {type === "Commercial" && <Building2 className="w-3.5 h-3.5 shrink-0" />}
+                  {type === "Other" && <Factory className="w-3.5 h-3.5 shrink-0" />}
+                  <span>{type}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         {/* Full Name & Mobile Number */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Full Name */}
@@ -222,31 +298,61 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({
           </div>
         </div>
 
-        {/* City / Location */}
-        <div>
-          <label
-            htmlFor="consult-location"
-            className="block text-xs font-extrabold uppercase tracking-wider text-[#0F291E] mb-1.5"
-          >
-            City / Location <span className="text-red-500">*</span>
-          </label>
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#475569]">
-              <MapPin className="w-4 h-4" />
+        {/* City / Location & Customer Email (Optional) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* City / Location */}
+          <div>
+            <label
+              htmlFor="consult-location"
+              className="block text-xs font-extrabold uppercase tracking-wider text-[#0F291E] mb-1.5"
+            >
+              City / Location <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#475569]">
+                <MapPin className="w-4 h-4" />
+              </div>
+              <input
+                id="consult-location"
+                type="text"
+                placeholder="e.g. Pune, Navi Mumbai, Nashik"
+                {...register("location")}
+                className={`w-full pl-10 pr-3.5 py-2.5 bg-[#F0FDF4]/60 border rounded-xl text-xs sm:text-sm text-[#0F291E] placeholder:text-[#475569]/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16A34A] transition-all ${
+                  errors.location ? "border-red-400 bg-red-50/20" : "border-[#DCFCE7]"
+                }`}
+              />
             </div>
-            <input
-              id="consult-location"
-              type="text"
-              placeholder="e.g. Pune, Navi Mumbai, Nashik"
-              {...register("location")}
-              className={`w-full pl-10 pr-3.5 py-2.5 bg-[#F0FDF4]/60 border rounded-xl text-xs sm:text-sm text-[#0F291E] placeholder:text-[#475569]/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16A34A] transition-all ${
-                errors.location ? "border-red-400 bg-red-50/20" : "border-[#DCFCE7]"
-              }`}
-            />
+            {errors.location && (
+              <p className="mt-1 text-[11px] text-red-600">{errors.location.message}</p>
+            )}
           </div>
-          {errors.location && (
-            <p className="mt-1 text-[11px] text-red-600">{errors.location.message}</p>
-          )}
+
+          {/* Customer Email (Optional) */}
+          <div>
+            <label
+              htmlFor="consult-email"
+              className="block text-xs font-extrabold uppercase tracking-wider text-[#0F291E] mb-1.5"
+            >
+              Customer Email <span className="text-[11px] font-normal text-[#64748B] normal-case">(Optional)</span>
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#475569]">
+                <Mail className="w-4 h-4" />
+              </div>
+              <input
+                id="consult-email"
+                type="email"
+                placeholder="e.g. rajesh@example.com"
+                {...register("email")}
+                className={`w-full pl-10 pr-3.5 py-2.5 bg-[#F0FDF4]/60 border rounded-xl text-xs sm:text-sm text-[#0F291E] placeholder:text-[#475569]/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16A34A] transition-all ${
+                  errors.email ? "border-red-400 bg-red-50/20" : "border-[#DCFCE7]"
+                }`}
+              />
+            </div>
+            {errors.email && (
+              <p className="mt-1 text-[11px] text-red-600">{errors.email.message}</p>
+            )}
+          </div>
         </div>
 
         {/* Monthly Electricity Bill */}

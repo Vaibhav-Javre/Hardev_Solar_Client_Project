@@ -243,7 +243,7 @@ export default function ResidentialSolarPage() {
             </div>
 
             <div className="lg:col-span-7">
-              <ConsultationForm />
+              <ConsultationForm defaultPropertyType="Residential" source="residential_solar_page" />
             </div>
           </div>
         </div>

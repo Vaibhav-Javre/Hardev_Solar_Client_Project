@@ -262,7 +262,7 @@ export default function CommercialSolarPage() {
             </div>
 
             <div className="lg:col-span-7">
-              <ConsultationForm />
+              <ConsultationForm defaultPropertyType="Commercial" source="commercial_solar_page" />
             </div>
           </div>
         </div>

@@ -44,6 +44,8 @@ const DICTIONARY: Record<string, Record<Language, string>> = {
   "form.subtitle": { en: "Fill in a few details and our solar team will calculate your rooftop potential and prepare a customized solar plan across Maharashtra.", mr: "काही माहिती भरा आणि आमची सोलर टीम आपल्या छताच्या क्षमतेनुसार संपूर्ण महाराष्ट्रात सोलर योजना तयार करेल.", hi: "कुछ विवरण भरें और हमारी सोलर टीम आपकी छत की क्षमता के अनुसार अनुकूलित सोलर योजना तैयार करेगी।" },
   "form.fullName": { en: "Full Name", mr: "पूर्ण नाव", hi: "पूरा नाम" },
   "form.mobileNumber": { en: "Mobile Number", mr: "मोबाईल नंबर", hi: "मोबाइल नंबर" },
+  "form.email": { en: "Customer Email", mr: "ईमेल पत्ता", hi: "ईमेल पता" },
+  "form.propertyType": { en: "Property Type", mr: "इमारत / मालमत्तेचा प्रकार", hi: "संपत्ति का प्रकार" },
   "form.location": { en: "City / Location", mr: "शहर / ठिकाण", hi: "शहर / स्थान" },
   "form.monthlyBill": { en: "Monthly Electricity Bill", mr: "मासिक वीज बिल", hi: "मासिक बिजली बिल" },
   "form.requirements": { en: "Describe Your Requirements / Questions (Optional)", mr: "आपल्या गरजा किंवा प्रश्न नमूद करा (ऐच्छिक)", hi: "अपनी आवश्यकताएं या प्रश्न लिखें (वैकल्पिक)" },
