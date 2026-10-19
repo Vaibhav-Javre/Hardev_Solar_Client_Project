@@ -106,36 +106,41 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-[#0F291E] flex flex-col lg:flex-row">
       {/* Mobile Header Bar */}
-      <div className="lg:hidden bg-white border-b border-[#DCFCE7] px-4 py-3 flex items-center justify-between sticky top-0 z-40 shadow-xs">
-        <Link href="/admin" className="flex items-center gap-2.5">
-          <Logo className="h-8 w-auto" />
-          <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md bg-[#DCFCE7] text-[#16A34A] border border-[#BBF7D0]">
-            Admin
-          </span>
-        </Link>
+      <div className="lg:hidden bg-white border-b border-[#DCFCE7] px-3 sm:px-4 py-2.5 sm:py-3 flex items-center justify-between sticky top-0 z-40 shadow-xs">
+        {/* Left: 3-Lines Menu Toggle + Logo + Admin Badge */}
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <button
+            type="button"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="p-2 rounded-xl text-[#0F291E] hover:bg-[#F0FDF4] border border-[#DCFCE7] hover:border-[#BBF7D0] transition-colors cursor-pointer shrink-0"
+            aria-label={mobileOpen ? "Close admin navigation menu" : "Open admin navigation menu"}
+            aria-expanded={mobileOpen}
+          >
+            {mobileOpen ? <X className="w-5 h-5 text-[#16A34A]" /> : <Menu className="w-5 h-5 text-[#0F291E]" />}
+          </button>
 
-        <div className="flex items-center gap-2">
+          <Link href="/admin" className="flex items-center gap-2 min-w-0">
+            <Logo className="h-7 sm:h-8 w-auto max-w-[125px] sm:max-w-none shrink-0" />
+            <span className="text-[10px] uppercase font-black tracking-wider px-2 py-0.5 rounded-md bg-[#16A34A] text-white border border-[#15803D] shadow-2xs shrink-0">
+              Admin
+            </span>
+          </Link>
+        </div>
+
+        {/* Right: Language Selector + Quick Actions */}
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           {/* Mobile Language Switcher */}
           <LanguageSelector variant="topbar" />
 
+          {/* Quick Change Password Button */}
           <button
             type="button"
             onClick={() => setChangePasswordOpen(true)}
-            className="p-2 rounded-xl text-[#16A34A] bg-[#F0FDF4] hover:bg-[#DCFCE7] border border-[#DCFCE7] transition-colors cursor-pointer"
+            className="p-2 rounded-xl text-[#16A34A] bg-[#F0FDF4] hover:bg-[#DCFCE7] border border-[#DCFCE7] transition-colors cursor-pointer shrink-0"
             title="Change Password"
             aria-label="Change Password"
           >
             <KeyRound className="w-4 h-4" />
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="p-2 rounded-xl text-[#0F291E] hover:bg-[#F0FDF4] border border-[#DCFCE7] transition-colors cursor-pointer"
-            aria-label={mobileOpen ? "Close admin navigation menu" : "Open admin navigation menu"}
-            aria-expanded={mobileOpen}
-          >
-            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
       </div>

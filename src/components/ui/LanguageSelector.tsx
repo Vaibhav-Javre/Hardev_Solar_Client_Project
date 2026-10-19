@@ -180,14 +180,15 @@ export function LanguageSelector({
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#0F291E] hover:text-[#16A34A] bg-[#DCFCE7]/60 hover:bg-[#DCFCE7] px-2.5 py-1 rounded-lg border border-[#BBF7D0] transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1 sm:gap-1.5 text-[11px] font-bold text-[#0F291E] hover:text-[#16A34A] bg-[#DCFCE7]/60 hover:bg-[#DCFCE7] px-2 sm:px-2.5 py-1.5 rounded-lg border border-[#BBF7D0] transition-colors cursor-pointer shrink-0"
           aria-label="Select Language"
           aria-expanded={isOpen}
         >
-          <Globe className="w-3.5 h-3.5 text-[#16A34A]" />
-          <span>{activeLangInfo.flag}</span>
-          <span>{activeLangInfo.nativeName}</span>
-          <ChevronDown className="w-2.5 h-2.5 text-[#475569]" />
+          <Globe className="w-3.5 h-3.5 text-[#16A34A] shrink-0" />
+          <span className="shrink-0">{activeLangInfo.flag}</span>
+          <span className="hidden sm:inline font-bold">{activeLangInfo.nativeName}</span>
+          <span className="sm:hidden uppercase text-[10px] font-extrabold">{activeLangInfo.code}</span>
+          <ChevronDown className="w-2.5 h-2.5 text-[#475569] shrink-0" />
         </button>
 
         {isOpen && (
