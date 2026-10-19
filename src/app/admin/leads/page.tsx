@@ -22,6 +22,10 @@ import {
   ExternalLink,
   ShieldAlert,
   ArrowUpDown,
+  Send,
+  Copy,
+  Check,
+  RotateCcw,
 } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { getCustomerWhatsAppUrl, getCustomerPhoneCallUrl } from "@/lib/site-config";
@@ -99,6 +103,121 @@ function LeadsContent() {
   const [deleteConfirmLead, setDeleteConfirmLead] = useState<LeadItem | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  // Email Composer Modal State
+  const [emailModalLead, setEmailModalLead] = useState<LeadItem | null>(null);
+  const [emailSubject, setEmailSubject] = useState("");
+  const [emailBody, setEmailBody] = useState("");
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
+  const [emailSentSuccess, setEmailSentSuccess] = useState<string | null>(null);
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [copiedEmailText, setCopiedEmailText] = useState(false);
+
+  const generateDefaultTemplate = (lead: LeadItem) => {
+    const firstName = lead.fullName?.split(" ")[0] || lead.fullName || "Customer";
+    const subject = `Hardev Solar Services - Solar Consultation & Proposal for ${lead.fullName}`;
+
+    const customerNote =
+      lead.message &&
+      lead.message.trim() &&
+      lead.message !== "Requested rooftop solar consultation" &&
+      lead.message !== "Requested solar consultation"
+        ? `• Your Query / Rooftop Notes: "${lead.message.trim()}"\n`
+        : "";
+
+    const body = `Dear ${firstName},
+
+Thank you for your interest in Hardev Solar Services!
+
+We have received your enquiry for your ${lead.propertyType} property in ${lead.city}. Our qualified solar engineering team has reviewed your details and is preparing an optimal solar design.
+
+Enquiry Summary:
+• Customer Name: ${lead.fullName}
+• Location: ${lead.city}
+• Property Type: ${lead.propertyType}
+• Interested Solution: ${lead.interestedService || "Rooftop Solar System"}
+• Monthly Electricity Bill: ${lead.monthlyElectricityBill || "Standard"}
+${customerNote}
+With an on-grid rooftop solar installation from Hardev Solar Services, you can reduce your monthly electricity bills by up to 80-90% and secure dependable, clean energy with MNRE-approved Tier-1 solar modules (25-year performance warranty).
+
+Would you be available for a brief 5-minute phone consultation or a free on-site survey this week?
+
+Please feel free to reply directly to this email, or connect with our team:
+📞 Call: +91 98228 23115 / +91 93737 21217
+💬 WhatsApp: https://wa.me/919822823115
+🌐 Website: https://hardevsolar.com
+
+Warm regards,
+Hardev Solar Services Team
+Solar Energy Solutions across Maharashtra
+Chinchwad, Pune`;
+
+    return { subject, body };
+  };
+
+  const handleOpenEmailModal = (lead: LeadItem) => {
+    const { subject, body } = generateDefaultTemplate(lead);
+    setEmailModalLead(lead);
+    setEmailSubject(subject);
+    setEmailBody(body);
+    setEmailSentSuccess(null);
+    setEmailError(null);
+    setCopiedEmailText(false);
+  };
+
+  const handleResetTemplate = () => {
+    if (!emailModalLead) return;
+    const { subject, body } = generateDefaultTemplate(emailModalLead);
+    setEmailSubject(subject);
+    setEmailBody(body);
+  };
+
+  const handleSendEmail = async () => {
+    if (!emailModalLead || !emailModalLead.email) return;
+    setIsSendingEmail(true);
+    setEmailSentSuccess(null);
+    setEmailError(null);
+
+    try {
+      const res = await fetch("/api/admin/leads/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: emailModalLead.email,
+          customerName: emailModalLead.fullName,
+          subject: emailSubject,
+          message: emailBody,
+          leadId: emailModalLead._id,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        setEmailSentSuccess(data.message || `Email successfully sent to ${emailModalLead.email}`);
+        if (emailModalLead.status === "NEW") {
+          handleStatusChange("CONTACTED");
+        }
+      } else {
+        setEmailError(data.message || "Failed to dispatch email.");
+      }
+    } catch {
+      setEmailError("Network error while attempting to send email.");
+    } finally {
+      setIsSendingEmail(false);
+    }
+  };
+
+  const handleCopyEmailDraft = async () => {
+    if (!emailModalLead) return;
+    const fullText = `To: ${emailModalLead.email}\nSubject: ${emailSubject}\n\n${emailBody}`;
+    try {
+      await navigator.clipboard.writeText(fullText);
+      setCopiedEmailText(true);
+      setTimeout(() => setCopiedEmailText(false), 2500);
+    } catch {
+      alert("Unable to copy to clipboard.");
+    }
+  };
+
   const handleCloseModal = useCallback(() => {
     hasAutoSelectedRef.current = true;
     setSelectedLead(null);
@@ -117,7 +236,9 @@ function LeadsContent() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        if (deleteConfirmLead) {
+        if (emailModalLead) {
+          setEmailModalLead(null);
+        } else if (deleteConfirmLead) {
           setDeleteConfirmLead(null);
         } else if (selectedLead) {
           handleCloseModal();
@@ -126,7 +247,7 @@ function LeadsContent() {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedLead, deleteConfirmLead, handleCloseModal]);
+  }, [selectedLead, deleteConfirmLead, emailModalLead, handleCloseModal]);
 
   const fetchLeads = useCallback(async () => {
     setLoading(true);
@@ -450,6 +571,16 @@ function LeadsContent() {
                         {dateStr}
                       </span>
                       <div className="flex items-center gap-2">
+                        {lead.email && (
+                          <button
+                            type="button"
+                            onClick={() => handleOpenEmailModal(lead)}
+                            className="p-1.5 rounded-lg hover:bg-emerald-50 text-[#16A34A] border border-[#DCFCE7] transition-colors cursor-pointer"
+                            title="Send Email to Customer"
+                          >
+                            <Mail className="w-4 h-4" />
+                          </button>
+                        )}
                         <button
                           type="button"
                           onClick={() => setDeleteConfirmLead(lead)}
@@ -587,6 +718,17 @@ function LeadsContent() {
 
                         {/* Actions */}
                         <td className="py-4 px-4 sm:px-6 text-right whitespace-nowrap space-x-2">
+                          {lead.email && (
+                            <button
+                              type="button"
+                              onClick={() => handleOpenEmailModal(lead)}
+                              className="px-2.5 py-1.5 rounded-lg bg-slate-50 hover:bg-[#F0FDF4] hover:text-[#16A34A] text-slate-700 text-xs font-bold border border-slate-200 hover:border-[#BBF7D0] transition-colors cursor-pointer inline-flex items-center gap-1"
+                              title={`Send Email to ${lead.email}`}
+                            >
+                              <Mail className="w-3.5 h-3.5 text-[#16A34A]" />
+                              <span>Email</span>
+                            </button>
+                          )}
                           <button
                             type="button"
                             onClick={() => setSelectedLead(lead)}
@@ -769,13 +911,14 @@ function LeadsContent() {
                 </a>
 
                 {selectedLead.email && (
-                  <a
-                    href={`mailto:${selectedLead.email}?subject=Hardev Solar Services Proposal for ${selectedLead.city}`}
-                    className="py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#0F291E] font-bold text-xs flex items-center justify-center gap-2 transition-colors col-span-2 sm:col-span-1"
+                  <button
+                    type="button"
+                    onClick={() => handleOpenEmailModal(selectedLead)}
+                    className="py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-[#F0FDF4] hover:text-[#16A34A] hover:border-[#BBF7D0] text-[#0F291E] font-bold text-xs flex items-center justify-center gap-2 border border-slate-200 transition-colors col-span-2 sm:col-span-1 cursor-pointer shadow-2xs"
                   >
-                    <Mail className="w-4 h-4" />
+                    <Mail className="w-4 h-4 text-[#16A34A]" />
                     <span>Send Email</span>
-                  </a>
+                  </button>
                 )}
               </div>
 
@@ -996,6 +1139,203 @@ function LeadsContent() {
                 >
                   {isDeleting ? "Deleting..." : "Delete Lead"}
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Email Customer Composer Modal */}
+        {emailModalLead && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs"
+            onClick={() => !isSendingEmail && setEmailModalLead(null)}
+          >
+            <div
+              className="bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] flex flex-col border-2 border-[#BBF7D0] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Modal Header */}
+              <div className="p-5 sm:p-6 border-b border-[#DCFCE7] flex items-center justify-between bg-gradient-to-r from-[#F0FDF4] to-white">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-[#DCFCE7] text-[#16A34A] flex items-center justify-center border border-[#BBF7D0] shrink-0 shadow-xs">
+                    <Mail className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg sm:text-xl font-black text-[#0F291E]">
+                      Send Email to {emailModalLead.fullName}
+                    </h3>
+                    <p className="text-xs text-[#64748B] mt-0.5">
+                      Review or edit the predefined subject and proposal message before dispatching.
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setEmailModalLead(null)}
+                  disabled={isSendingEmail}
+                  className="p-2 rounded-xl text-[#475569] hover:bg-slate-100 hover:text-[#0F291E] transition-colors cursor-pointer disabled:opacity-50"
+                  aria-label="Close email modal"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Modal Scrollable Body */}
+              <div className="p-5 sm:p-6 overflow-y-auto space-y-4 flex-1 text-xs sm:text-sm">
+                {/* Feedback Alerts */}
+                {emailSentSuccess && (
+                  <div className="p-3.5 bg-[#F0FDF4] border border-[#BBF7D0] rounded-2xl text-[#15803D] text-xs font-bold flex items-center gap-2 shadow-2xs">
+                    <CheckCircle2 className="w-4 h-4 shrink-0 text-[#16A34A]" />
+                    <span>{emailSentSuccess}</span>
+                  </div>
+                )}
+
+                {emailError && (
+                  <div className="p-3.5 bg-red-50 border border-red-200 rounded-2xl text-red-700 text-xs font-bold flex items-center gap-2 shadow-2xs">
+                    <ShieldAlert className="w-4 h-4 shrink-0 text-red-600" />
+                    <span>{emailError}</span>
+                  </div>
+                )}
+
+                {/* Recipient Details Banner */}
+                <div className="p-3.5 bg-[#F8FAFC] border border-[#DCFCE7] rounded-2xl flex flex-wrap items-center justify-between gap-2 text-xs">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="font-extrabold uppercase text-[10px] text-[#64748B]">To:</span>
+                    <span className="font-bold text-[#0F291E] truncate">{emailModalLead.fullName}</span>
+                    <span className="font-mono text-[#16A34A] bg-[#F0FDF4] px-2 py-0.5 rounded-md border border-[#BBF7D0] text-xs font-bold truncate">
+                      {emailModalLead.email}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-[11px] text-[#64748B]">
+                    <span>📍 {emailModalLead.city}</span>
+                    <span>•</span>
+                    <span className="font-semibold text-[#16A34A]">{emailModalLead.propertyType}</span>
+                  </div>
+                </div>
+
+                {/* Subject Line */}
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-extrabold uppercase tracking-wider text-[#0F291E]">
+                    Subject Line <span className="text-[11px] font-normal text-[#64748B] normal-case">(Editable)</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={emailSubject}
+                    onChange={(e) => setEmailSubject(e.target.value)}
+                    placeholder="Enter email subject..."
+                    className="w-full px-3.5 py-2.5 bg-[#F8FAFC] border border-[#DCFCE7] rounded-xl text-xs sm:text-sm font-bold text-[#0F291E] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16A34A] transition-all"
+                  />
+                </div>
+
+                {/* Message Body */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-extrabold uppercase tracking-wider text-[#0F291E]">
+                      Message Body <span className="text-[11px] font-normal text-[#64748B] normal-case">(Editable)</span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={handleResetTemplate}
+                      className="inline-flex items-center gap-1 text-[11px] font-bold text-[#16A34A] hover:underline cursor-pointer"
+                      title="Reset message back to original predefined template"
+                    >
+                      <RotateCcw className="w-3 h-3" />
+                      <span>Reset to Predefined Template</span>
+                    </button>
+                  </div>
+                  <textarea
+                    rows={12}
+                    value={emailBody}
+                    onChange={(e) => setEmailBody(e.target.value)}
+                    placeholder="Write your email proposal..."
+                    className="w-full p-3.5 bg-[#F8FAFC] border border-[#DCFCE7] rounded-xl text-xs sm:text-sm text-[#0F291E] font-sans leading-relaxed focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#16A34A] transition-all resize-y"
+                  />
+                </div>
+              </div>
+
+              {/* Modal Footer Actions */}
+              <div className="p-4 sm:p-5 border-t border-[#DCFCE7] bg-[#F8FAFC] flex flex-col sm:flex-row items-center justify-between gap-3">
+                {/* Secondary Quick Launchers: Gmail, Mailto, Copy */}
+                <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                  {/* Gmail Web Compose Button */}
+                  <a
+                    href={`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(
+                      emailModalLead.email || ""
+                    )}&su=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 transition-colors shadow-2xs"
+                    title="Open directly in Gmail Web Composer with subject and body pre-filled"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>Open in Gmail</span>
+                  </a>
+
+                  {/* Mail App */}
+                  <a
+                    href={`mailto:${encodeURIComponent(emailModalLead.email || "")}?subject=${encodeURIComponent(
+                      emailSubject
+                    )}&body=${encodeURIComponent(emailBody)}`}
+                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 bg-white hover:bg-slate-100 border border-slate-200 transition-colors shadow-2xs"
+                    title="Open in your default email client"
+                  >
+                    <Mail className="w-3.5 h-3.5 text-slate-500" />
+                    <span>Mail App</span>
+                  </a>
+
+                  {/* Copy Draft */}
+                  <button
+                    type="button"
+                    onClick={handleCopyEmailDraft}
+                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 bg-white hover:bg-slate-100 border border-slate-200 transition-colors cursor-pointer shadow-2xs"
+                    title="Copy full drafted email to clipboard"
+                  >
+                    {copiedEmailText ? (
+                      <>
+                        <Check className="w-3.5 h-3.5 text-emerald-600" />
+                        <span className="text-emerald-700">Copied!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3.5 h-3.5 text-slate-500" />
+                        <span>Copy Text</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {/* Primary Action Buttons */}
+                <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                  <button
+                    type="button"
+                    onClick={() => setEmailModalLead(null)}
+                    disabled={isSendingEmail}
+                    className="px-4 py-2.5 rounded-xl border border-slate-200 text-[#475569] font-bold text-xs hover:bg-slate-100 transition-colors cursor-pointer disabled:opacity-50"
+                  >
+                    Close
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleSendEmail}
+                    disabled={isSendingEmail || !emailSubject.trim() || !emailBody.trim()}
+                    className="px-5 py-2.5 rounded-xl bg-[#16A34A] hover:bg-[#15803D] active:bg-[#166534] text-white font-extrabold text-xs shadow-md shadow-[#16A34A]/20 flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-60"
+                  >
+                    {isSendingEmail ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Sending Email...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4" />
+                        <span>Send Email via System</span>
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           </div>

@@ -139,3 +139,93 @@ export async function sendLeadNotificationEmail(
     return { success: false, error: errorMsg };
   }
 }
+
+export interface CustomerDirectEmailPayload {
+  to: string;
+  customerName?: string;
+  subject: string;
+  message: string;
+}
+
+/**
+ * Sends a direct response or proposal email from Admin to a customer lead.
+ */
+export async function sendCustomerDirectEmail(
+  payload: CustomerDirectEmailPayload
+): Promise<{ success: boolean; simulated?: boolean; messageId?: string; error?: string }> {
+  if (!payload.to || !payload.subject || !payload.message) {
+    return { success: false, error: "Recipient email, subject, and message are required." };
+  }
+
+  // If Resend API key is not configured or is a placeholder, run in simulated/dev mode
+  if (!resend) {
+    console.log(
+      `[Customer Email - Dev/Simulated Mode]\nTo: ${payload.to}\nSubject: ${payload.subject}\nBody:\n${payload.message}`
+    );
+    return {
+      success: true,
+      simulated: true,
+      messageId: `dev-${Date.now()}`,
+    };
+  }
+
+  try {
+    const fromAddress =
+      process.env.RESEND_FROM_EMAIL ||
+      "Hardev Solar Services <onboarding@resend.dev>";
+
+    // Format plain text into clean styled HTML paragraphs while preserving line breaks
+    const formattedHtml = payload.message
+      .split("\n\n")
+      .map(
+        (paragraph) =>
+          `<p style="margin: 0 0 12px 0; line-height: 1.6; color: #0f291e;">${paragraph.replace(
+            /\n/g,
+            "<br/>"
+          )}</p>`
+      )
+      .join("");
+
+    const htmlContent = `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #dcfce7; border-radius: 16px; background-color: #ffffff;">
+        <div style="border-bottom: 2px solid #16a34a; padding-bottom: 16px; margin-bottom: 20px;">
+          <h2 style="color: #0f291e; margin: 0 0 4px 0; font-size: 20px; font-weight: 800;">
+            ${SITE_CONFIG.companyName}
+          </h2>
+          <p style="color: #16a34a; margin: 0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
+            Solar Energy Solutions & Rooftop Installations
+          </p>
+        </div>
+
+        <div style="font-size: 14px; line-height: 1.6; color: #0f291e;">
+          ${formattedHtml}
+        </div>
+
+        <div style="margin-top: 28px; padding-top: 16px; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b;">
+          <p style="margin: 0 0 4px 0; font-weight: 700; color: #0f291e;">Hardev Solar Services</p>
+          <p style="margin: 0 0 4px 0;">📞 Phone: ${SITE_CONFIG.displayPhone} | 💬 WhatsApp: ${SITE_CONFIG.displayPhone}</p>
+          <p style="margin: 0;">🌐 Website: https://hardevsolar.com | ✉ Email: ${SITE_CONFIG.email}</p>
+        </div>
+      </div>
+    `;
+
+    const { data, error } = await resend.emails.send({
+      from: fromAddress,
+      to: payload.to,
+      subject: payload.subject,
+      html: htmlContent,
+      text: payload.message,
+    });
+
+    if (error) {
+      console.warn("[Resend Customer Email Warning]:", error.message);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, messageId: data?.id };
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : "Failed to send email";
+    console.warn("[Customer Email Error]:", errorMsg);
+    return { success: false, error: errorMsg };
+  }
+}
